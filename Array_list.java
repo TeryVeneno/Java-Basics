@@ -13,6 +13,7 @@ public class Array_list {
     }
     average = total / grades.size();
     System.out.println("The average is " + average + ".");
+    System.out.println(grades);
 
     /*int grade1, grade2, grade3, total;
     double average
@@ -21,5 +22,6 @@ public class Array_list {
     grade3 = 90;
     total = grade1 + grade 2 + grade3;
     average = total / 3;*/
+
   }
 }
