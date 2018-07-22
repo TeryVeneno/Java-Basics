@@ -9,7 +9,7 @@ public class P_test {
     Ran ran = new Ran();
     Random rand = new Random(System.currentTimeMillis());
     double d = 1;
-    int[] inputs = new int[6];
+    double[] inputs = new double[6];
     inputs[0] = 1;
     for (int s = 1; s < inputs.length; s++) {
       inputs[s] = rand.nextInt(2);
