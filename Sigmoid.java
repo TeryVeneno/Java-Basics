@@ -5,32 +5,40 @@ import utilities.*;
 public class Sigmoid {
 
   double[] weights;
-  double[] inputs;
   double total;
   double bias;
   double cur_output;
+  double[] inputs;
   Ran ran = new Ran();
+  Random rand = new Random();
 
-  public Sigmoid () {
-    inputs = ins.clone();
+  public Sigmoid (int amount) {
+    total = 0;
+    inputs = new double[amount];
     weights = new double[inputs.length];
     for (int s = 0; s < inputs.length; s++) {
-      weights[s] =  ran.d_ran(1, -1);
+      weights[s] = rand.nextDouble();
     }
-    bias = ran.d_ran(1, -1);
+    bias = ran.d_ran(-4, -5);
   }
 
-  public double output () {
+  public double output (double input[]) {
+    total = 0;
+    inputs = input.clone();
     for (int s = 0; s < inputs.length; s++) {
       total += inputs[s] * weights[s];
     }
-    total = sig(total);
     total += bias;
+    total = sig(total);
     cur_output = total;
     return total;
   }
 
-  public void train_hidden (double new_val, int index) {
+  public double i_ret(int index) {
+    return inputs[index];
+  }
+
+  public void train (double new_val, int index) {
     weights[index] = weights[index] + new_val;
   }
 
@@ -42,7 +50,19 @@ public class Sigmoid {
     return weights[index];
   }
 
-  public double format (int limit, double formatted) {
-    return Double.parseDouble(String.format(("%." + limit +"g%n"), formatted));
+  public  double[] i_get_w () {
+    return weights;
+  }
+
+  public double get_t () {
+    return total;
+  }
+
+  public int get_w_l () {
+    return weights.length;
+  }
+
+  public int get_i_l () {
+    return inputs.length;
   }
 }

@@ -12,7 +12,7 @@ public class Ran {
     return (int)(rand.nextDouble() * (max - min)) + min;
   }
 
-  public double d_ran (int max, int min) {
+  public double d_ran (double max, double min) {
     return (rand.nextDouble() * (max - min)) + min;
   }
 
