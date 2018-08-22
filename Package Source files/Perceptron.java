@@ -4,13 +4,13 @@ import utilities.*;
 
 public class Perceptron {
 
-  double[] weights;
-  double[] inputs;
-  double bias;
-  double total;
-  double cur_output;
-  Ran ran = new Ran();
-  Random rand = new Random();
+  private double[] weights;
+  private double[] inputs;
+  private double bias;
+  private double total;
+  private double cur_output;
+  private Ran ran = new Ran();
+  private Random rand = new Random();
 
   public Perceptron (int amount) {
     total = 0;

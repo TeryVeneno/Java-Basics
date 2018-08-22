@@ -1,8 +1,8 @@
-import java.util.Random;
+import utilities.Ran;
 
 public class Sort {
   public static void main(String[] args) {
-    Random ran = new Random(System.currentTimeMillis());
-    System.out.println(ran.nextDouble());
+    Ran ran = new Ran();
+    System.out.println(ran.percent_chance(0.8, 0.2));
   }
 }

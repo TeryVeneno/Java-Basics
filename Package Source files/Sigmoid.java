@@ -4,13 +4,13 @@ import utilities.*;
 
 public class Sigmoid {
 
-  double[] weights;
-  double total;
-  double bias;
-  double cur_output;
-  double[] inputs;
-  Ran ran = new Ran();
-  Random rand = new Random();
+  private double[] weights;
+  private double total;
+  private double bias;
+  private double cur_output;
+  private double[] inputs;
+  private Ran ran = new Ran();
+  private Random rand = new Random();
 
   public Sigmoid (int amount) {
     total = 0;
@@ -19,7 +19,7 @@ public class Sigmoid {
     for (int s = 0; s < inputs.length; s++) {
       weights[s] = rand.nextDouble();
     }
-    bias = ran.d_ran(-4, -5);
+    bias = ran.d_ran(-0.9, -5);
   }
 
   public double output (double input[]) {
