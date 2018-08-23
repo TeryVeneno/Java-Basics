@@ -5,11 +5,9 @@ import utilities.*;
 public class Brain {
   private Perceptron[][] p_array;
   private Sigmoid[][] s_array;
-  private int[][] Q;
   private double[][] feed;
   private double[] inputs;
   private double learn_rate;
-  private double eagerness;
   private int lays;
   private int ns;
   private int ch;
@@ -86,11 +84,6 @@ public class Brain {
     }
   }
 
-  public Brain (int[][] states, double learn_r, double eager) {
-    Q = states.clone();
-    learn_rate = learn_r;
-    eagerness = eager;
-  }
 
   public double[] respond () {
       for (int n = 0; n < ns; n++) {

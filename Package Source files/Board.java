@@ -18,6 +18,14 @@ public class Board {
     board = template.clone();
   }
 
+  public static void whitespace () {
+    int count = 0;
+    while (count < 27) {
+      System.out.println();
+      count++;
+    }
+  }
+
   public void show_board () {
     String show = "|";
     String wall = "";
