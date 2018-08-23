@@ -101,8 +101,9 @@ public class R_test {
     int ran = rand.nextInt(9);
     Reinforcement r = new Reinforcement(9, 4, 0.1, 0.8, ran);
     take = conv(ran);
-    board.update_board(take[0], take[1], 'a');
+    board.update_board(take[0], take[1], '0');
     for (int s = 0; s < 25; s++) {
+      board.whitespace();
       board.show_board();
       if (maze[take[0]][take[1]] == 'F') {
         r.train(1, pos_actions(take[0], take[1]));
