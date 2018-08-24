@@ -15,7 +15,12 @@ public class Board {
   }
 
   public Board (char[][] template) {
-    board = template.clone();
+    board = new char[template.length][template[0].length];
+    for (int c = 0; c < template.length; c++) {
+      for (int r = 0; r < template[c].length; r++) {
+        board[c][r] = template[c][r];
+      }
+    }
   }
 
   public static void whitespace () {
