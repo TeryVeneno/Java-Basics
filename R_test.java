@@ -1,3 +1,4 @@
+import java.io.IOException;
 import utilities.*;
 import java.util.*;
 import machine_learning.Reinforcement;
@@ -6,23 +7,23 @@ public class R_test {
   static char[][] maze = new char[3][3];
   static char[] maz = new char[9];
   static public void set () {
-    maze[0][0] = '0';
-    maze[0][1] = '0';
-    maze[0][2] = '0';
+    maze[0][0] = ' ';
+    maze[0][1] = ' ';
+    maze[0][2] = ' ';
     maze[1][0] = 'F';
-    maze[1][1] = '0';
-    maze[1][2] = '0';
-    maze[2][0] = '0';
-    maze[2][1] = '0';
+    maze[1][1] = ' ';
+    maze[1][2] = ' ';
+    maze[2][0] = ' ';
+    maze[2][1] = ' ';
     maze[2][2] = 'X';
-    maz[0] = '0';
-    maz[1] = '0';
-    maz[2] = '0';
+    maz[0] = ' ';
+    maz[1] = ' ';
+    maz[2] = ' ';
     maz[3] = 'F';
-    maz[4] = '0';
-    maz[5] = '0';
-    maz[6] = '0';
-    maz[7] = '0';
+    maz[4] = ' ';
+    maz[5] = ' ';
+    maz[6] = ' ';
+    maz[7] = ' ';
     maz[8] = 'X';
   }
 
@@ -102,7 +103,7 @@ public class R_test {
     return ret;
   }
 
-  public static void main(String[] args) throws InterruptedException {
+  public static void main(String[] args) throws IOException, InterruptedException {
     set();
     int[] take = new int[2];
     int choice = 0;
@@ -112,44 +113,9 @@ public class R_test {
     int ran = rand.nextInt(9);
     Reinforcement r = new Reinforcement(9, 4, 0.1, 0.8, ran, 150);
     take = conv(ran);
-    board.update_board(take[0], take[1], 'a');
-    for (int s = 0; s < 10000; s++) {
-      board.update_board(take[0], take[1], maze[take[0]][take[1]]);
-      choice = r.choose(pos_actions(take[0], take[1]));
-      if (choice == 0) {
-        next = con(take[0], take[1]);
-        next -= 3;
-        take = conv(next);
-      } else if (choice == 1) {
-        next = con(take[0], take[1]);
-        next -= 1;
-        take = conv(next);
-      } else if (choice == 2) {
-        next = con(take[0], take[1]);
-        next += 3;
-        take = conv(next);
-      } else if (choice == 3) {
-        next = con(take[0], take[1]);
-        next += 1;
-        take = conv(next);
-      }
-      if (maze[take[0]][take[1]] == 'X') {
-        r.train(-2, pos_actions(take[0], take[1]), choice);
-        r.set_c(next);
-      } else if (maze[take[0]][take[1]] == 'F') {
-        r.train(2, pos_actions(take[0], take[1]), choice);
-        ran = rand.nextInt(9);
-        take = conv(ran);
-        r.set_c(ran);
-      } else {
-        r.train(0, pos_actions(take[0], take[1]), choice);
-        r.set_c(next);
-      }
-      board.update_board(take[0], take[1], 'a');
-    }
-    for (int s = 0; s < 50; s++) {
-      board.whitespace();
-      board.show_board();
+    board.update_board(take[0], take[1], 'A');
+    new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+    for (int s = 0; s < 1000; s++) {
       board.update_board(take[0], take[1], maze[take[0]][take[1]]);
       choice = r.choose(pos_actions(take[0], take[1]));
       if (choice == 0) {
@@ -181,8 +147,53 @@ public class R_test {
         r.train(0, pos_actions(take[0], take[1]), choice);
         r.set_c(next);
       }
-      board.update_board(take[0], take[1], 'a');
-      Thread.sleep(1000);
+      board.update_board(take[0], take[1], 'A');
+    }
+    for (int s = 0; s < 50; s++) {
+      new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+      if (maze[take[0]][take[1]] == 'F') {
+        board.show_board();
+        Thread.sleep(150);
+        board.update_board(take[0], take[1], maze[take[0]][take[1]]);
+        ran = rand.nextInt(9);
+        r.set_c(ran);
+        take = conv(ran);
+        new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+        board.update_board(take[0], take[1], 'A');
+      }
+      board.show_board();
+      board.update_board(take[0], take[1], maze[take[0]][take[1]]);
+      choice = r.choose(pos_actions(take[0], take[1]));
+      if (choice == 0) {
+        next = con(take[0], take[1]);
+        next -= 3;
+        take = conv(next);
+      } else if (choice == 1) {
+        next = con(take[0], take[1]);
+        next -= 1;
+        take = conv(next);
+      } else if (choice == 2) {
+        next = con(take[0], take[1]);
+        next += 3;
+        take = conv(next);
+      } else if (choice == 3) {
+        next = con(take[0], take[1]);
+        next += 1;
+        take = conv(next);
+      }
+      if (maze[take[0]][take[1]] == 'X') {
+        r.train(-1, pos_actions(take[0], take[1]), choice);
+        board.update_board(take[0], take[1], 'A');
+        r.set_c(next);
+      } else if (maze[take[0]][take[1]] == 'F') {
+        r.train(1, pos_actions(take[0], take[1]), choice);
+        board.update_board(take[0], take[1], 'A');
+      } else {
+        r.train(0, pos_actions(take[0], take[1]), choice);
+        board.update_board(take[0], take[1], 'A');
+        r.set_c(next);
+      }
+      Thread.sleep(300);
     }
     double[][] q = r.ret_q().clone();
     for (int s = 0; s < q.length; s++) {
