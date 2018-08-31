@@ -41,12 +41,12 @@ public class Cat_Mouse {
         }
       }
       if (s == 2) {
-        if (l2 <= 4) {
+        if (l2 < 5) {
           poses[s] = 1;
         }
       }
       if (s == 3) {
-        if (w2 <= 4) {
+        if (w2 < 5) {
           poses[s] = 1;
         }
       }
@@ -56,8 +56,8 @@ public class Cat_Mouse {
 
   public static int[] cat_s (int mouse_pos1, int mouse_pos2, int cat_pos1, int cat_pos2) {
     int[] holder = new int[2];
-    holder[0] = cat_pos1 - mouse_pos1;
-    holder[1] = cat_pos2 - mouse_pos2;;
+    holder[0] = mouse_pos1 - cat_pos1;
+    holder[1] = mouse_pos2 - cat_pos2;;
     return holder;
   }
 
@@ -78,20 +78,28 @@ public class Cat_Mouse {
     int[] length = new int[25];
     int[] width = new int[25];
     int count = 0;
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 25; i++) {
       length[i] = count;
-      if (i == 2) {
+      if (i == 4) {
         count = 1;
-      } else if (i == 5) {
+      } else if (i == 9) {
         count = 2;
+      } else if (i == 14) {
+        count = 3;
+      } else if (i == 19) {
+        count = 4;
       }
     }
     count = 0;
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 25; i++) {
       width[i] = count;
-      if (i == 2) {
+      if (i == 4) {
         count = 0;
-      } else if (i == 5) {
+      } else if (i == 9) {
+        count = 0;
+      } else if (i == 14) {
+        count = 0;
+      } else if (i == 19) {
         count = 0;
       } else {
         count++;
@@ -107,6 +115,7 @@ public class Cat_Mouse {
     int[] take = new int[2];
     int[] movements = new int[2];
     int[] last_pos = new int[2];
+    int[] last_pos2 = new int[2];
     int[] take2 = new int[2];
     int choice = 0;
     int next = 0;
@@ -115,7 +124,7 @@ public class Cat_Mouse {
     Board board = new Board(maze);
     Random rand = new Random(System.currentTimeMillis());
     int ran = rand.nextInt(25);
-    Reinforcement r = new Reinforcement(25, 4, 0.1, 0.8, ran, -1);
+    Reinforcement r = new Reinforcement(25, 4, 0.1, 0.8, ran, 100);
     take = conv(ran);
     last = ran;
     ran = rand.nextInt(25);
@@ -123,152 +132,89 @@ public class Cat_Mouse {
     board.update_board(take[0], take[1], 'C');
     board.update_board(take2[0], take2[1], 'A');
     new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-    for (int s = 0; s < 10000; s++) {
-      choice = r.choose(pos_actions(take[0], take[1]));
-      if (choice == 0) {
-        next = con(take[0], take[1]);
-        next -= 5;
-        board.update_board(take[0], take[1], maze[take[0]][take[1]]);
-        board.update_board(take2[0], take2[1], maze[take2[0]][take2[1]]);
-        take = conv(next);
-      } else if (choice == 1) {
-        next = con(take[0], take[1]);
-        next -= 1;
-        board.update_board(take[0], take[1], maze[take[0]][take[1]]);
-        board.update_board(take2[0], take2[1], maze[take2[0]][take2[1]]);
-        take = conv(next);
-      } else if (choice == 2) {
-        next = con(take[0], take[1]);
-        next += 5;
-        board.update_board(take[0], take[1], maze[take[0]][take[1]]);
-        board.update_board(take2[0], take2[1], maze[take2[0]][take2[1]]);
-        take = conv(next);
-      } else if (choice == 3) {
-        next = con(take[0], take[1]);
-        next += 1;
-        board.update_board(take[0], take[1], maze[take[0]][take[1]]);
-        board.update_board(take2[0], take2[1], maze[take2[0]][take2[1]]);
-        take = conv(next);
-      }
-      holder = board.ret_board().clone();
-      if (holder[take[0]][take[1]] == 'C') {
-        r.train(-1, pos_actions(take[0], take[1]), choice);
-        ran = rand.nextInt(25);
-        take = conv(ran);
-        r.set_c(ran);
-        take2 = conv(0);
-        board.update_board(take[0], take[1], 'A');
-        board.update_board(take2[0], take2[1], 'C');
-      } else if (maze[take[0]][take[1]] == 'F') {
-        r.train(1, pos_actions(take[0], take[1]), choice);
-        take2 = conv(0);
-        ran = rand.nextInt(25);
-        take = conv(ran);
-        r.set_c(ran);
-        board.update_board(take[0], take[1], 'A');
-        board.update_board(take2[0], take2[1], 'C');
-      } else {
-        r.train(0, pos_actions(take[0], take[1]), choice);
-        r.set_c(next);
-        board.update_board(take[0], take[1], 'A');
-        movements = cat_s(take[0], take[1], take2[0], take2[1]);
-        if (movements[0] < 0 && take2[0] > 0) {
-          take2[0] = -1 + take2[0];
-        } else if (movements[0] > 0 && take2[0] < 5) {
-          take2[0] = 1 + take2[0];
-        } else {
-          if (movements[1] < 0 && take2[1] > 0) {
-            take2[1] = -1 + take2[1];
-          } else if (movements[1] > 0 && take2[1] < 5) {
-            take2[1] = 1 + take2[1];
-          }
-        }
-        holder = board.ret_board().clone();
-        if (holder[take2[0]][take2[1]] == 'A') {
-          r.set_c(last);
-          r.train(-1, pos_actions(last_pos[0], last_pos[1]), choice);
-          ran = rand.nextInt(25);
-          take = conv(ran);
-          r.set_c(ran);
-          take2 = conv(0);
-          board.update_board(take[0], take[1], 'A');
-        }
-        board.update_board(take2[0], take2[1], 'C');
-      }
-      last = next;
-    }
-
-    for (int s = 0; s < 50; s++) {
+    for (int s = 0; s < 200; s++) {
       new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+      if (maze[take[0]][take[1]] == 'F') {
+        board.show_board();
+        Thread.sleep(300);
+        board.update_board(take[0], take[1], maze[take[0]][take[1]]);
+        board.update_board(take2[0], take2[1], maze[take2[0]][take2[1]]);
+        ran = rand.nextInt(25);
+        r.set_c(ran);
+        take = conv(ran);
+        if (ran <= 25 && ran > 0) {
+          take2 = conv(ran-1);
+        } else if (ran >= 0 && ran < 25) {
+          take2 = conv(ran+1);
+        }
+        new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+        board.update_board(take[0], take[1], 'A');
+        board.update_board(take2[0], take2[1], 'C');
+      }
       board.show_board();
+      board.update_board(take[0], take[1], maze[take[0]][take[1]]);
+      board.update_board(take2[0], take2[1], maze[take2[0]][take2[1]]);
+      board.update_board(take[0], take[1], 'A');
+      movements = cat_s(take[0], take[1], take2[0], take2[1]);
+      if (movements[0] < 0 && take2[0] > 0) {
+        take2[0] = -1 + take2[0];
+      } else if (movements[0] > 0 && take2[0] < 5) {
+        take2[0] = 1 + take2[0];
+      } else {
+        if (movements[1] < 0 && take2[1] > 0) {
+          take2[1] = -1 + take2[1];
+        } else if (movements[1] > 0 && take2[1] < 5) {
+          take2[1] = 1 + take2[1];
+        }
+      }
+      board.update_board(take[0], take[1], maze[take[0]][take[1]]);
       choice = r.choose(pos_actions(take[0], take[1]));
       if (choice == 0) {
         next = con(take[0], take[1]);
         next -= 5;
-        board.update_board(take[0], take[1], maze[take[0]][take[1]]);
-        board.update_board(take2[0], take2[1], maze[take2[0]][take2[1]]);
         take = conv(next);
       } else if (choice == 1) {
         next = con(take[0], take[1]);
         next -= 1;
-        board.update_board(take[0], take[1], maze[take[0]][take[1]]);
-        board.update_board(take2[0], take2[1], maze[take2[0]][take2[1]]);
         take = conv(next);
       } else if (choice == 2) {
         next = con(take[0], take[1]);
         next += 5;
-        board.update_board(take[0], take[1], maze[take[0]][take[1]]);
-        board.update_board(take2[0], take2[1], maze[take2[0]][take2[1]]);
         take = conv(next);
       } else if (choice == 3) {
         next = con(take[0], take[1]);
         next += 1;
-        board.update_board(take[0], take[1], maze[take[0]][take[1]]);
-        board.update_board(take2[0], take2[1], maze[take2[0]][take2[1]]);
         take = conv(next);
       }
+      board.update_board(take2[0], take2[1], 'C');
       holder = board.ret_board().clone();
       if (holder[take[0]][take[1]] == 'C') {
         r.train(-1, pos_actions(take[0], take[1]), choice);
         ran = rand.nextInt(25);
+        board.update_board(take[0], take[1], maze[take[0]][take[1]]);
+        board.update_board(take2[0], take2[1], maze[take2[0]][take2[1]]);
         take = conv(ran);
         r.set_c(ran);
-        take2 = conv(0);
+        if (ran <= 25 && ran > 0) {
+          take2 = conv(ran-1);
+        } else if (ran >= 0 && ran < 25) {
+          take2 = conv(ran+1);
+        }
         board.update_board(take[0], take[1], 'A');
         board.update_board(take2[0], take2[1], 'C');
       } else if (maze[take[0]][take[1]] == 'F') {
         r.train(1, pos_actions(take[0], take[1]), choice);
-        ran = rand.nextInt(25);
-        take = conv(ran);
-        r.set_c(ran);
+        board.update_board(take[0], take[1], maze[take[0]][take[1]]);
+        board.update_board(take2[0], take2[1], maze[take2[0]][take2[1]]);
+        r.set_c(next);
         board.update_board(take[0], take[1], 'A');
         board.update_board(take2[0], take2[1], 'C');
       } else {
         r.train(0, pos_actions(take[0], take[1]), choice);
         r.set_c(next);
+        board.update_board(take[0], take[1], maze[take[0]][take[1]]);
+        board.update_board(take2[0], take2[1], maze[take2[0]][take2[1]]);
         board.update_board(take[0], take[1], 'A');
-        movements = cat_s(take[0], take[1], take2[0], take2[1]);
-        if (movements[0] < 0 && take2[0] > 0) {
-          take2[0] = -1 + take2[0];
-        } else if (movements[0] > 0 && take2[0] < 5) {
-          take2[0] = 1 + take2[0];
-        } else {
-          if (movements[1] < 0 && take2[1] > 0) {
-            take2[1] = -1 + take2[1];
-          } else if (movements[1] > 0 && take2[1] < 5) {
-            take2[1] = 1 + take2[1];
-          }
-        }
-        holder = board.ret_board().clone();
-        if (holder[take2[0]][take2[1]] == 'A') {
-          r.set_c(last);
-          r.train(-1, pos_actions(last_pos[0], last_pos[1]), choice);
-          ran = rand.nextInt(25);
-          take = conv(ran);
-          r.set_c(ran);
-          take2 = conv(0);
-          board.update_board(take[0], take[1], 'A');
-        }
         board.update_board(take2[0], take2[1], 'C');
       }
       last = next;
@@ -278,6 +224,5 @@ public class Cat_Mouse {
     for (int s = 0; s < q.length; s++) {
       System.out.println(s + "" + Arrays.toString(q[s]));
     }
-    System.out.println(Arrays.toString(conv(9)));
   }
 }
