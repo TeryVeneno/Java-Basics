@@ -149,11 +149,15 @@ public class Battle {
     int cycles;
     double[] ai_stats = new double[4];
     double[] ai_stats2 = new double[32];
-    double[] inputs = new double[1];
+    double[] inputs = new double[5];
     double[] inputs2 = new double[8];
     double[] stats = new double[4];
     String[] stats2 = new String[4];
     inputs[0] = .100;
+    inputs[1] = ran.i_ran(100,0) / 100;
+    inputs[2] = ran.i_ran(100,0) / 100;
+    inputs[3] = ran.i_ran(100,0) / 100;
+    inputs[4] = ran.i_ran(100,0) / 100;
     inputs2[0] = 1;
     inputs2[1] = 0;
     inputs2[2] = 0;
@@ -235,7 +239,7 @@ public class Battle {
         limit2 -= 100;
       }
     }
-    Brain AI_1 = new Brain(5, 4, 1, 0.3, inputs, desired);
+    Brain AI_1 = new Brain(5, 32, 1, 0.3, inputs, desired);
     Brain AI_2 = new Brain(5, 32, 0, 0.3, inputs2, desired2);
     System.out.println("Welcome to Battle Design.\n");
     System.out.println("To play first input the stats for your creature. There are only 4 stats: Health, Attack, Defense, and Agility.");
@@ -701,6 +705,11 @@ public class Battle {
             }
           }
           System.out.println("\nPrepping AI...");
+          inputs[1] = health;
+          inputs[2] = attack;
+          inputs[3] = defense;
+          inputs[4] = agility;
+          AI_1.change_i(inputs);
           AI_1.think(10000);
           while (ai_limit > 0) {
           ai_stats = format.form(AI_1.respond().clone());

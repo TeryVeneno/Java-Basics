@@ -52,8 +52,8 @@ public class Brain {
     desire = desired.clone();
     learn_rate = learn_r;
     ch = choice;
-    lays = layers - 1;
-    ns = neurons - 1;
+    lays = layers;
+    ns = neurons;
     o_ns = o_neurons;
     if (choice == 0) {
       p_array = new Perceptron[layers][neurons];
