@@ -186,7 +186,7 @@ public class Cat_Mouse {
             take2[1] = 1 + take2[1];
           }
         }
-        count = 2;
+        count = 4;
       }
       if (count != 0) {
         count--;
@@ -297,7 +297,7 @@ public class Cat_Mouse {
             take2[1] = 1 + take2[1];
           }
         }
-        count = 2;
+        count = 4;
       }
       if (count != 0) {
         count--;
