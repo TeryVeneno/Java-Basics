@@ -239,8 +239,8 @@ public class Battle {
         limit2 -= 100;
       }
     }
-    Brain AI_1 = new Brain(5, 32, 1, 0.3, inputs, desired);
-    Brain AI_2 = new Brain(5, 32, 0, 0.3, inputs2, desired2);
+    Brain AI_1 = new Brain(32, 32, 4, 1, 0.3, inputs, desired);
+    Brain AI_2 = new Brain(5, 32, 32, 0, 0.3, inputs2, desired2);
     System.out.println("Welcome to Battle Design.\n");
     System.out.println("To play first input the stats for your creature. There are only 4 stats: Health, Attack, Defense, and Agility.");
     System.out.println("You get 100 stat points to distribute across them all.\n");
@@ -709,6 +709,7 @@ public class Battle {
           inputs[2] = attack;
           inputs[3] = defense;
           inputs[4] = agility;
+          AI_1.think(10000);
           AI_1.change_i(inputs);
           AI_1.think(10000);
           while (ai_limit > 0) {

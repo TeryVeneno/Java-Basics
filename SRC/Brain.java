@@ -15,8 +15,12 @@ public class Brain {
   private double desire[];
 
   public Brain (int layers, int neurons, int choice, double learn_r, double inp[], double[] desired) {
-    feed = new double[layers][neurons];
-    inputs = inp.clone();
+    feed = new double[layers][neurons+1];
+    inputs = new double[inp.length+1];
+    for (int s = 0; s < inp.length; s++) {
+      inputs[s] = inp[s];
+    }
+    inputs[inputs.length-1] = 1;
     desire = desired.clone();
     learn_rate = learn_r;
     ch = choice;
@@ -30,7 +34,7 @@ public class Brain {
       }
       for (int l = 1; l < layers; l++) {
         for (int n = 0; n < ns; n++) {
-          p_array[l][n] = new Perceptron(neurons);
+          p_array[l][n] = new Perceptron(neurons+1);
         }
       }
     } else if (choice == 1) {
@@ -40,15 +44,18 @@ public class Brain {
       }
       for (int l = 1; l < layers; l++) {
         for (int n = 0; n < ns; n++) {
-          s_array[l][n] = new Sigmoid(neurons);
+          s_array[l][n] = new Sigmoid(neurons+1);
         }
       }
     }
   }
 
   public Brain (int layers, int neurons, int o_neurons, int choice, double learn_r, double inp[], double[] desired) {
-    feed = new double[layers][neurons];
-    inputs = inp.clone();
+    feed = new double[layers][neurons+1];
+    inputs = new double[inp.length+1];
+    for (int s = 0; s < inp.length; s++) {
+      inputs[s] = inp[s];
+    }
     desire = desired.clone();
     learn_rate = learn_r;
     ch = choice;
@@ -60,26 +67,26 @@ public class Brain {
       for (int s = 0; s < ns; s++) {
         p_array[0][s] = new Perceptron(inputs.length);
       }
-      for (int l = 1; l < layers; l++) {
-        for (int n = 0; n < ns-1; n++) {
-          p_array[l][n] = new Perceptron(neurons);
+      for (int l = 1; l < layers-1; l++) {
+        for (int n = 0; n < ns; n++) {
+          p_array[l][n] = new Perceptron(neurons+1);
         }
       }
       for (int n = 0; n < o_ns; n++) {
-        p_array[lays-1][n] = new Perceptron(neurons);
+        p_array[lays-1][n] = new Perceptron(neurons+1);
       }
     } else if (choice == 1) {
       s_array = new Sigmoid[layers][neurons];
       for (int s = 0; s < ns; s++) {
         s_array[0][s] = new Sigmoid(inputs.length);
       }
-      for (int l = 1; l < layers; l++) {
-        for (int n = 0; n < ns-1; n++) {
-          s_array[l][n] = new Sigmoid(neurons);
+      for (int l = 1; l < layers-1; l++) {
+        for (int n = 0; n < ns; n++) {
+          s_array[l][n] = new Sigmoid(neurons+1);
         }
       }
       for (int n = 0; n < o_ns; n++) {
-        s_array[lays-1][n] = new Sigmoid(neurons);
+        s_array[lays-1][n] = new Sigmoid(neurons+1);
       }
     }
   }
@@ -89,10 +96,12 @@ public class Brain {
       for (int n = 0; n < ns; n++) {
         feed[0][n] = s_array[0][n].output(inputs);
       }
-      for (int l = 1; l < lays; l++) {
+      feed[0][ns] = 1;
+      for (int l = 1; l < lays-1; l++) {
         for (int n = 0; n < ns; n++) {
           feed[l][n] = s_array[l][n].output(feed[l-1]);
         }
+        feed[l][ns] = 1;
       }
       for (int n = 0; n < o_ns; n++) {
         feed[lays-1][n] = s_array[lays-1][n].output(feed[lays-2]);
@@ -104,10 +113,12 @@ public class Brain {
     for (int n = 0; n < ns; n++) {
       feed[0][n] = p_array[0][n].output(inputs);
     }
-    for (int l = 1; l < lays; l++) {
+    feed[0][ns] = 1;
+    for (int l = 1; l < lays-1; l++) {
       for (int n = 0; n < ns; n++) {
         feed[l][n] = p_array[l][n].output(feed[l-1]);
       }
+      feed[l][ns] = 1;
     }
     for (int n = 0; n < o_ns; n++) {
       feed[lays-1][n] = p_array[lays-1][n].output(feed[lays-2]);
@@ -182,13 +193,21 @@ public class Brain {
   }
 
   public void change (double[] inp, double[] desired, double learn_r) {
-    inputs = inp.clone();
+    inputs = new double[inp.length+1];
+    for (int s = 0; s < inp.length; s++) {
+      inputs[s] = inp[s];
+    }
+    inputs[inputs.length-1] = 1;
     desire = desired.clone();
     learn_rate = learn_r;
   }
 
   public void change_i (double[] inp) {
-    inputs = inp.clone();
+    inputs = new double[inp.length+1];
+    for (int s = 0; s < inp.length; s++) {
+      inputs[s] = inp[s];
+    }
+    inputs[inputs.length-1] = 1;
   }
 
   public void change_d (double[] desired) {
