@@ -13,13 +13,11 @@ public class Neuron {
     genes = g.clone();
   }
 
-  public double output (double[] in) {
+  public double output (ArrayList<Double> in) {
     double input = 0;
     for (int g = 0; g < genes.size(); g++) {
-      for (int w = 0; w < in.length; w++) {
-        if (genes.get(g).usable()) {
-          input += genes.get(g).weights.get(w) * in[w];
-        }
+      if (genes.get(g).usable()) {
+        input += genes.get(g).weight * in[g];
       }
     }
     return 1.0 / (1.0 + Math.exp((-1 * input)));
@@ -29,7 +27,7 @@ public class Neuron {
     return genes;
   }
 
-  publi voidc add_gene (Gene g) {
+  publi void add_gene (Gene g) {
     genes.add(g.clone());
   }
 
@@ -52,11 +50,17 @@ public class Neuron {
   public void randomize_w () {
     Ran ran = new Ran();
     for (int g = 0; g < genes.size(); g++) {
-      for (int w = 0; w < in.length; w++) {
-        if (genes.get(g).usable()) {
-          genes.get(g).weights.get(w) = ran.d_ran(genes.get(g).weights.get(w)+0.03,genes.get(g).weights.get(w)-0.03);
-        }
+      if (genes.get(g).usable()) {
+        genes.get(g).weight = ran.d_ran(genes.get(g).weight+0.03,genes.get(g).weight-0.03);
       }
     }
+  }
+
+  public void set_w (double val, int gene_i, int weight_i) {
+    genes.get(gene_i).weights.get(weight_i) = val;
+  }
+
+  public double get_w (int gene_i, int weight_i) {
+    return genes.get(gene_i).weights.get(weight_i);
   }
 }

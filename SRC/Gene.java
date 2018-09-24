@@ -2,30 +2,24 @@ package machine_learning;
 import utilities.*;
 
 public class Gene {
-  public ArrayList<Integer> connections;
-  public ArrayList<Integer> pull_from;
-  public ArrayList<Double> weights;
+  public int connection;
+  public int weight;
   private boolean enabled;
   private int innov;
   private String type;
   Ran ran = new Ran();
 
-  public Gene (ArrayList<Integer> con, ArrayList<Double> w, ArrayList<Integer> p, boolean e, int i, String t) {
-    connection = con.clone();
-    weights = w.clone();
-    pull_from = p.clone();
+  public Gene (int con, Double w, boolean e, int i, String t) {
+    connection = con
+    weights = w
     enabled = e;
     innov = i;
     type = t;
   }
 
-  public Gene (ArrayList<Integer> con, ArrayList<Integer> p, boolean e, int i, String t) {
-    connection = con.clone();
-    pull_from = p.clone();
-    weights = new  ArrayList<Double>();
-    for (int w = 0; w < p.size(); w++) {
-      w.add(ran.d_ran(0.9, -0.9));
-    }
+  public Gene (int con, boolean e, int i, String t) {
+    connection = con
+    weight = ran.d_ran(1, -1);
     enabled = e;
     innov = i;
     type = t;
@@ -44,8 +38,8 @@ public class Gene {
     return enabled;
   }
 
-  public void set_weight (int index, double val) {
-    weights.get(index) = val;
+  public void set_weight (double val) {
+    weight = val
   }
 
   public boolean equals (Gene g) {

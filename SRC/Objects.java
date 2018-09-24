@@ -4,7 +4,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class Objects extends JLabel {
-  Rectangle[] rects;
+  public Rectangle[] rects;
 
   public Objects (Rectangle[] r) {
     rects = r.clone();
