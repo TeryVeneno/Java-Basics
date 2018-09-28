@@ -5,7 +5,7 @@ public class Gene {
   public int connection;
   public int weight;
   private boolean enabled;
-  private int innov;
+  private int innov;   
   private String type;
   Ran ran = new Ran();
 

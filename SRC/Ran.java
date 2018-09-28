@@ -4,7 +4,7 @@ import java.text.*;
 import java.math.RoundingMode;
 
 public class Ran {
-  Random rand = new Random(System.currentTimeMillis());
+  Random rand = new Random();
   private String s_total;
   DecimalFormat df = new DecimalFormat("#.#");
   public Ran () {

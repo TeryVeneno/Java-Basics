@@ -17,9 +17,8 @@ public class Sigmoid {
     inputs = new double[amount];
     weights = new double[inputs.length];
     for (int s = 0; s < inputs.length; s++) {
-      weights[s] = rand.nextDouble();
+      weights[s] = ran.d_ran(5, -5);
     }
-    bias = ran.d_ran(-0.9, -5);
   }
 
   public double output (double input[]) {
@@ -28,7 +27,6 @@ public class Sigmoid {
     for (int s = 0; s < inputs.length; s++) {
       total += inputs[s] * weights[s];
     }
-    total += bias;
     total = sig(total);
     cur_output = total;
     return total;
@@ -64,5 +62,17 @@ public class Sigmoid {
 
   public int get_i_l () {
     return inputs.length;
+  }
+
+  public void randomize_w () {
+    for (int w = 0; w < weights.length; w++) {
+      if (ran.percent_chance(0.25,0.5)) {
+        if (ran.percent_chance(0.10,0.5)) {
+          weights[w] = ran.d_ran(5,-5);
+        } else {
+          weights[w] = weights[w] + ran.d_ran(3.7,-3.7);
+        }
+      }
+    }
   }
 }

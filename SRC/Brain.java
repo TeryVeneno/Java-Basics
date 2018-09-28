@@ -217,4 +217,29 @@ public class Brain {
   public void change_r (double learn_r) {
     learn_rate = learn_r;
   }
+
+  public void mutate () {
+    for (int l = 0; l < lays-1; l++) {
+      for (int n = 0; n < ns; n++) {
+        s_array[l][n].randomize_w();
+      }
+    }
+    for (int s = 0; s < o_ns; s++) {
+      s_array[lays-1][s].randomize_w();
+    }
+  }
+
+  public void set_array (Sigmoid[][] s) {
+    s_array = s.clone();
+  }
+
+  public Sigmoid[][] ret_array () {
+    return s_array;
+  }
+
+  public Brain deep_copy () {
+    Brain brain = new Brain(lays, ns, o_ns, ch, learn_rate, inputs, desire);
+    brain.set_array(s_array);
+    return brain;
+  }
 }

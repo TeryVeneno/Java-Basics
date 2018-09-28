@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 import gui.*;
 import javax.swing.*;
+import utilities.*;
 
 public class Key_test extends KeyAdapter {
   public static int rx = 0;
@@ -37,9 +38,11 @@ public class Key_test extends KeyAdapter {
   }
 
   public static void main(String[] args) throws InterruptedException {
-    Rectangle[] player = new Rectangle[1];
-    player[0] = new Rectangle(0,0,30,30);
-    Objects object = new Objects(player);
+    Rectangle[] player_objects = new Rectangle[2];
+    Ran ran = new Ran();
+    player_objects[0] = new Rectangle(0,0,30,30);
+    player_objects[1] = new Rectangle(100, 100, 20, 20);
+    Objects object = new Objects(player_objects);
     object.setPreferredSize(new Dimension(1000,1000));
     JFrame frame = new JFrame("Key Test");
     JPanel panel = new JPanel();
@@ -53,6 +56,9 @@ public class Key_test extends KeyAdapter {
     frame.setVisible(true);
     while (true) {
       object.rects[0].translate(rx, ry);
+      if (object.rects[0].intersects(object.rects[1])) {
+        object.rects[1].setLocation(ran.i_ran(frame.getContentPane().getWidth()-20, 0), ran.i_ran(frame.getContentPane().getHeight()-20, 0));
+      }
       frame.repaint();
       Thread.sleep(17);
     }
