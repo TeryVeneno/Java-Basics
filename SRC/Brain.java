@@ -230,7 +230,14 @@ public class Brain {
   }
 
   public void set_array (Sigmoid[][] s) {
-    s_array = s.clone();
+    for (int l = 0; l < lays-1; l++) {
+      for (int n = 0; n < ns; n++) {
+        s_array[l][n] = new Sigmoid(s[l][n].i_get_w());
+      }
+    }
+    for (int o = 0; o < o_ns; o++) {
+      s_array[lays-1][o] = new Sigmoid(s[lays-1][o].i_get_w());
+    }
   }
 
   public Sigmoid[][] ret_array () {

@@ -1,0 +1,60 @@
+import java.util.*;
+import gui.*;
+
+public class Diagram {
+  public static void main(String[] args) {
+    int[] a = new int[3];
+    a[0] = 1;
+    a[1] = 2;
+    a[2] = 3;
+    int[] b = a;
+    System.out.println(Arrays.toString(a));
+    System.out.println(Arrays.toString(b));
+    System.out.println();
+    System.out.println();
+    a[2] = 4;
+    System.out.println(Arrays.toString(a));
+    System.out.println(Arrays.toString(b));
+    System.out.println();
+    System.out.println();
+    b[2] = 5;
+    System.out.println(Arrays.toString(a));
+    System.out.println(Arrays.toString(b));
+    System.out.println();
+    System.out.println();
+    b = a.clone();
+    b[2] = 4;
+    System.out.println(Arrays.toString(a));
+    System.out.println(Arrays.toString(b));
+    System.out.println();
+    System.out.println();
+    Coordinate[] as = new Coordinate[3];
+    as[0] = new Coordinate(1,1);
+    as[1] = new Coordinate(2,2);
+    as[2] = new Coordinate(3,3);
+    Coordinate[] bs = as;
+    System.out.println(Coordinate.to_string(as));
+    System.out.println(Coordinate.to_string(bs));
+    System.out.println();
+    System.out.println();
+    as[2].x = 4;
+    as[2].y = 4;
+    System.out.println(Coordinate.to_string(as));
+    System.out.println(Coordinate.to_string(bs));
+    System.out.println();
+    System.out.println();
+    bs[2].x = 5;
+    bs[2].y = 5;
+    System.out.println(Coordinate.to_string(as));
+    System.out.println(Coordinate.to_string(bs));
+    System.out.println();
+    System.out.println();
+    bs = as.clone();
+    bs[2].x = 4;
+    bs[2].y = 4;
+    System.out.println(Coordinate.to_string(as));
+    System.out.println(Coordinate.to_string(bs));
+    System.out.println();
+    System.out.println();
+  }
+}

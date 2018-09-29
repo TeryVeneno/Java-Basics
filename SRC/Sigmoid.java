@@ -6,7 +6,6 @@ public class Sigmoid {
 
   private double[] weights;
   private double total;
-  private double bias;
   private double cur_output;
   private double[] inputs;
   private Ran ran = new Ran();
@@ -19,6 +18,12 @@ public class Sigmoid {
     for (int s = 0; s < inputs.length; s++) {
       weights[s] = ran.d_ran(5, -5);
     }
+  }
+
+  public Sigmoid (double w[]) {
+    total = 0;
+    inputs = new double[w.length];
+    weights = w.clone();
   }
 
   public double output (double input[]) {
@@ -70,7 +75,7 @@ public class Sigmoid {
         if (ran.percent_chance(0.10,0.5)) {
           weights[w] = ran.d_ran(5,-5);
         } else {
-          weights[w] = weights[w] + ran.d_ran(3.7,-3.7);
+          weights[w] = weights[w] + ran.d_ran(1,-1);
         }
       }
     }

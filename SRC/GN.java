@@ -8,24 +8,20 @@ import utilities.*;
 import java.util.*;
 
 public class GN extends KeyAdapter {
-  public static int rx = 0;
-  public static int ry = 0;
+  public static int rx = 5;
+  public static int ry = 5;
   public static int time = 2;
   public static long end = System.currentTimeMillis() + time*1000;
 
   public static void movements (double[] d) {
     if (d[0] >= 0.3) {
       ry = -5;
-    } else if (d[0] < 0.2 && d[1] < 0.2) {
-      ry = 0;
     }
     if (d[1] >= 0.3) {
       ry = 5;
     }
     if (d[2] >= 0.3) {
       rx = -5;
-    } else if (d[2] < 0.2 && d[3] < 0.2) {
-      rx = 0;
     }
     if (d[3] >= 0.3) {
       rx = 5;
@@ -52,10 +48,6 @@ public class GN extends KeyAdapter {
     int place = 0;
     long o_start = 0;
     int generations = 0;
-    long d_start = 0;
-    int x_pos = 400;
-    int y_pos = 100;
-    int count = 0;
     int distance = 0;
     int[] fitness = new int[100];
     int food_count = 0;
@@ -91,7 +83,6 @@ public class GN extends KeyAdapter {
       for (int s = 0; s < 100; s++) {
         start = System.currentTimeMillis();
         o_start = System.currentTimeMillis();
-        d_start = System.currentTimeMillis();
         while (death == 0) {
           object.string2 = "";
           input[0] = object.rects[0].getX();
@@ -105,14 +96,6 @@ public class GN extends KeyAdapter {
           creatures[s].change_i(input);
           choices = creatures[s].respond();
           movements(choices);
-          if (count == 0) {
-            count = 2;
-            x_pos = (int)object.rects[0].getX();
-            y_pos = (int)object.rects[0].getY();
-            if (((int)object.rects[0].getX() == 5+x_pos && (int)object.rects[0].getY()== 5+y_pos) || ((int)object.rects[0].getX() == 5-x_pos && (int)object.rects[0].getY() == 5-y_pos)) {
-              death = 1;
-            }
-          }
           object.rects[0].translate(rx, ry);
           distance += rx;
           distance += ry;
@@ -121,9 +104,7 @@ public class GN extends KeyAdapter {
             food_count++;
             start = System.currentTimeMillis();
           }
-          if ((System.currentTimeMillis() - start) >= 15000) {
-            death = 1;
-          } else if ((System.currentTimeMillis() - d_start >= 50) && (int)object.rects[0].getX() == x_pos && (int)object.rects[0].getY() == y_pos) {
+          if ((System.currentTimeMillis() - start) >= 8000) {
             death = 1;
           }
           if (object.rects[0].intersects(object.rects[2])) {
@@ -138,14 +119,17 @@ public class GN extends KeyAdapter {
           if (object.rects[0].intersects(object.rects[5])) {
             death = 1;
           }
+          frame.repaint();
+          Thread.sleep(17);
         }
         death = 0;
-        fitness[s] = food_count*5 + ((int)(System.currentTimeMillis() - o_start) * 10) + distance*100;
+        fitness[s] = food_count*10000 + ((int)(System.currentTimeMillis() - o_start) * 7) + distance*10;
         food_count = 0;
         distance = 0;
         object.rects[0].setLocation(400, 100);
         object.rects[1].setLocation(600, 400);
-        count--;
+        rx = 5;
+        ry = 5;
       }
 
       for (int s = 0; s < 100; s++) {
@@ -156,7 +140,14 @@ public class GN extends KeyAdapter {
       }
       max_val = 0;
       start = System.currentTimeMillis();
-      d_start = System.currentTimeMillis();
+      for (int s = 0; s < 20; s++) {
+        object.string2 = "Notice!!!!!!!!!!!!!!!!!!!!";
+        frame.repaint();
+        Thread.sleep(100);
+        object.string2 = "";
+        frame.repaint();
+        Thread.sleep(50);
+      }
       while (death == 0) {
         object.string2 = "Best";
         input[0] = object.rects[0].getX();
@@ -170,23 +161,13 @@ public class GN extends KeyAdapter {
         creatures[place].change_i(input);
         choices = creatures[place].respond();
         movements(choices);
-        if (count == 0) {
-          count = 2;
-          x_pos = (int)object.rects[0].getX();
-          y_pos = (int)object.rects[0].getY();
-          if (((int)object.rects[0].getX() == 5+x_pos && (int)object.rects[0].getY()== 5+y_pos) || ((int)object.rects[0].getX() == 5-x_pos && (int)object.rects[0].getY() == 5-y_pos)) {
-            death = 1;
-          }
-        }
         object.rects[0].translate(rx, ry);
         if (object.rects[0].intersects(object.rects[1])) {
           object.rects[1].setLocation(ran.i_ran(frame.getContentPane().getWidth()-20, 0), ran.i_ran(frame.getContentPane().getHeight()-20, 0));
           food_count++;
           start = System.currentTimeMillis();
         }
-        if ((System.currentTimeMillis() - start) >= 5000) {
-          death = 1;
-        } else if ((System.currentTimeMillis() - d_start >= 50) && (int)object.rects[0].getX() == x_pos && (int)object.rects[0].getY() == y_pos) {
+        if ((System.currentTimeMillis() - start) >= 8000) {
           death = 1;
         }
         if (object.rects[0].intersects(object.rects[2])) {
@@ -203,8 +184,9 @@ public class GN extends KeyAdapter {
         }
         frame.repaint();
         Thread.sleep(17);
-        count--;
       }
+      rx = 5;
+      ry = 5;
       for (int f = 0; f < 50; f++) {
         for (int f2 = 0; f2 < 100; f2++) {
           for (int s = 0; s < 50; s++) {
@@ -227,11 +209,15 @@ public class GN extends KeyAdapter {
       for (int f = 0; f < 50; f++) {
         listed[f] = -1;
       }
-      for (int s = 0; s < 50; s++) {
+      for (int s = 0; s < 25; s++) {
         creatures[s] = holder[s].deep_copy();
         creatures[s].mutate();
+        creatures[s+25] = holder[s].deep_copy();
+        creatures[s+25].mutate();
         creatures[s+50] = holder[s].deep_copy();
         creatures[s+50].mutate();
+        creatures[s+75] = holder[s].deep_copy();
+        creatures[s+75].mutate();
       }
       generations++;
       object.string = Integer.toString(generations);
