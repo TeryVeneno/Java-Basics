@@ -67,7 +67,7 @@ public class GN extends KeyAdapter {
     player_objects[3] = new Rectangle(-1, 0, 1, 1000);
     player_objects[4] = new Rectangle(999, 0, 1, 1000);
     player_objects[5] = new Rectangle(0, 728, 1000, 1);
-    Objectss object = new Objectss(player_objects, Integer.toString(generations), "Best");
+    Objectss object = new Objectss(player_objects, "Generation: " + Integer.toString(generations), "Best");
     object.setPreferredSize(new Dimension(1000,1000));
     JFrame frame = new JFrame("Genetic Algorithm");
     JPanel panel = new JPanel();
@@ -84,7 +84,7 @@ public class GN extends KeyAdapter {
         start = System.currentTimeMillis();
         o_start = System.currentTimeMillis();
         while (death == 0) {
-          object.string2 = "";
+          object.string2 = "Count: " + Integer.toString(s);
           input[0] = object.rects[0].getX();
           input[1] = object.rects[0].getY();
           input[2] = object.rects[0].getX() - object.rects[1].getX();
@@ -100,7 +100,7 @@ public class GN extends KeyAdapter {
           distance += rx;
           distance += ry;
           if (object.rects[0].intersects(object.rects[1])) {
-            object.rects[1].setLocation(ran.i_ran(frame.getContentPane().getWidth()-20, 0), ran.i_ran(frame.getContentPane().getHeight()-20, 0));
+            object.rects[1].setLocation(ran.i_ran(979, 0), ran.i_ran(708, 0));
             food_count++;
             start = System.currentTimeMillis();
           }
@@ -123,7 +123,7 @@ public class GN extends KeyAdapter {
           Thread.sleep(17);
         }
         death = 0;
-        fitness[s] = food_count*10000 + ((int)(System.currentTimeMillis() - o_start) * 7) + distance*10;
+        fitness[s] = food_count*10000 + (int)(System.currentTimeMillis() - o_start) + distance*10;
         food_count = 0;
         distance = 0;
         object.rects[0].setLocation(400, 100);
@@ -131,7 +131,6 @@ public class GN extends KeyAdapter {
         rx = 5;
         ry = 5;
       }
-
       for (int s = 0; s < 100; s++) {
         if (fitness[s] > max_val) {
           max_val = fitness[s];
@@ -140,6 +139,7 @@ public class GN extends KeyAdapter {
       }
       max_val = 0;
       start = System.currentTimeMillis();
+      object.string2 = "";
       for (int s = 0; s < 20; s++) {
         object.string2 = "Notice!!!!!!!!!!!!!!!!!!!!";
         frame.repaint();
@@ -163,7 +163,7 @@ public class GN extends KeyAdapter {
         movements(choices);
         object.rects[0].translate(rx, ry);
         if (object.rects[0].intersects(object.rects[1])) {
-          object.rects[1].setLocation(ran.i_ran(frame.getContentPane().getWidth()-20, 0), ran.i_ran(frame.getContentPane().getHeight()-20, 0));
+          object.rects[1].setLocation(ran.i_ran(979, 0), ran.i_ran(708, 0));
           food_count++;
           start = System.currentTimeMillis();
         }
@@ -220,7 +220,7 @@ public class GN extends KeyAdapter {
         creatures[s+75].mutate();
       }
       generations++;
-      object.string = Integer.toString(generations);
+      object.string = "Generation: " + Integer.toString(generations);
     }
   }
 }
