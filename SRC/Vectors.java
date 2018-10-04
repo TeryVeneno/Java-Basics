@@ -10,12 +10,15 @@ public class Vectors {
     direction = dir;
   }
 
-  public static Coordinate move (Vectors v, Coordinate c) {
-    double x_change = c.x;
-    double y_change = c.y;
-    x_change = Math.cos((v.direction))*v.magnitude;
-    y_change = Math.sin((v.direction))*v.magnitude;
-    Coordinate r = new Coordinate((int)x_change, (int)y_change);
-    return r;
+  public static int x_move (Vectors v, Coordinate c) {
+    int x_change = c.x;
+    x_change += (int)(Math.cos((Math.toRadians(v.direction)))*v.magnitude);
+    return x_change;
+  }
+
+  public static int y_move (Vectors v, Coordinate c) {
+    int y_change = c.y;
+    y_change += (int)(Math.sin((Math.toRadians(v.direction)))*v.magnitude);
+    return y_change;
   }
 }
