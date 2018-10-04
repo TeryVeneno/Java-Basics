@@ -113,8 +113,8 @@ public class GN extends KeyAdapter {
         start[s] = System.currentTimeMillis();
         o_start[s] = System.currentTimeMillis();
       }
+      sim = System.currentTimeMillis();
       while (!all_dead) {
-        sim = System.currentTimeMillis();
         for (int c = 0; c < pop; c++) {
           if (death[c] != 1) {
             rx = rxs[c];
@@ -136,10 +136,10 @@ public class GN extends KeyAdapter {
               food_count[c]++;
               start[c] = System.currentTimeMillis();
             }
-            if ((System.currentTimeMillis() - start[c]) >= 12000) {
+            if ((System.currentTimeMillis() - start[c]) >= 15000) {
               death[c] = 1;
             }
-            if (System.currentTimeMillis() - sim >= 60000) {
+            if (System.currentTimeMillis() - sim >= 120000) {
               all_dead = true;
               c = pop;
             }
@@ -155,12 +155,12 @@ public class GN extends KeyAdapter {
             if (object.rects[c].intersects(object.rects[pop*2+3])) {
               death[c] = 1;
             }
-            frame.repaint();
-            Thread.sleep(17);
           } else {
             object.rects[c].setLocation(3000,3000);
             object.rects[c+pop].setLocation(3000,3000);
           }
+          frame.repaint();
+          Thread.sleep(17);
         }
         for (int d = 0; d < pop; d++) {
           if (death[d] != 1) {
@@ -187,8 +187,10 @@ public class GN extends KeyAdapter {
       for (int l = 0; l < pop/4; l++) {
         for (int s = 0; s < pop; s++) {
           not_listed = true;
-          if (listed[l] == s) {
-            not_listed = false;
+          for (int f = 0; f < listed.length; f++) {
+            if (listed[f] == s) {
+              not_listed = false;
+            }
           }
           if (fitness[s] > max_val && not_listed) {
             max_val = fitness[s];
