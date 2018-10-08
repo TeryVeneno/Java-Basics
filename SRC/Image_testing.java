@@ -22,6 +22,7 @@ public class Image_testing extends JPanel {
     JFrame frame = new JFrame("Image_testing");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setSize(new Dimension(500,500));
+    frame.add(new Image_testing());
     frame.pack();
     frame.setVisible(true);
   }
