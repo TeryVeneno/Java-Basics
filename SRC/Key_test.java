@@ -52,7 +52,7 @@ public class Key_test extends KeyAdapter {
     Coordinate movements2 = new Coordinate(0,0);
     Vectors p = new Vectors(1,270);
     Vectors p2 = new Vectors(2, 47);
-    int last = 270;
+    int last = 0;
     player_objects[0] = new Rectangle(500,500,30,30);
     player_objects[1] = new Rectangle(0, 0, 30, 30);
     Objects object = new Objects(player_objects);
@@ -79,10 +79,12 @@ public class Key_test extends KeyAdapter {
         object.rects[0].setLocation(500,500);
       }
       if (object.rects[0].intersects(object.rects[1])) {
-         p.direction = 360-p2.direction;
-         p2.direction = 360-p.direction;
+         p.direction = -1*p2.direction;
+         p2.direction = -1*p.direction;
+         p.magnitude = p2.magnitude;
+         p2.magnitude = last;
       }
-      last = (int)p.direction;
+      last = (int)p.magnitude;
       movements.x = (int)object.rects[0].getX();
       movements.y = (int)object.rects[0].getY();
       movements2.x = (int)object.rects[1].getX();
@@ -93,10 +95,6 @@ public class Key_test extends KeyAdapter {
       movements2.y = (int)object.rects[1].getY();
       movements.x = (int)object.rects[0].getX();
       movements.y = (int)object.rects[0].getY();
-      if (object.rects[0].intersects(object.rects[1])) {
-        intersec = object.rects[0].intersection(object.rects[1]);
-        object.rects[0].setLocation((int)(intersec.getX()-30), (int)(intersec.getY()-30));
-      }
       frame.repaint();
       Thread.sleep(17);
       if (object.rects[0].getX() >= frame.getContentPane().getWidth() && object.rects[0].getY() >= frame.getContentPane().getHeight()) {
