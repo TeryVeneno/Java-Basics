@@ -13,7 +13,7 @@ public class Rotation extends JLabel {
     super.paintComponent(g);
     Graphics2D g2d = (Graphics2D)g;
     g2d.rotate(Math.toRadians(c_angle), (int)(rect.getX() + rect.getWidth()/2), (int)(rect.getY() + rect.getHeight()/2));
-    g2d.drawOval((int)rect.getX(), (int)rect.getY(), (int)rect.getHeight(), (int)rect.getWidth());
+    g2d.drawRect((int)rect.getX(), (int)rect.getY(), (int)rect.getHeight(), (int)rect.getWidth());
   }
   public static void main(String[] args) throws InterruptedException {
     JFrame frame = new JFrame("Rotation");
