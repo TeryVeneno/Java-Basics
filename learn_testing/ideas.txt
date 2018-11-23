@@ -1,0 +1,41 @@
+Ideas
+
+public int[] pos_actions (int length, int width) {
+  if (type == 0) {
+    int[] poses = new int[4];
+    poses[0] = 0;
+    poses[1] = 0;
+    poses[2] = 0;
+    poses[3] = 0;
+    int l1 = length-1;
+    int l2 = length+1;
+    int w1 = width-1;
+    int w2 = width+1;
+    for (int s = 0; s < poses.length; s++) {
+      if (s == 0) {
+        if (l1 >= 0) {
+          poses[s] = 1;
+        }
+      }
+      if (s == 1) {
+        if (w1 >= 0) {
+          poses[s] = 1;
+        }
+      }
+      if (s == 2) {
+        if (l2 <= Math.sqrt(states)-1) {
+          poses[s] = 1;
+        }
+      }
+      if (s == 3) {
+        if (w2 <= Math.sqrt(states)-1) {
+          poses[s] = 1;
+        }
+      }
+    }
+    return poses;
+  } else {
+    int[] poses = new int[states];
+  }
+  return poses;
+}
