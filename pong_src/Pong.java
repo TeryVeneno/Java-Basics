@@ -23,7 +23,8 @@ public class Pong {
         cl.show(slides, "Menu");
         frame.repaint();
       }
-      System.out.println(menu.pvp);
+      frame.repaint();
+      Thread.sleep(17);
       if (menu.pvp) {
         menu.pvp = false;
         cl.show(slides, "Game");
