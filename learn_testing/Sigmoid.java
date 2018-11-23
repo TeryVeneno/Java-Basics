@@ -6,17 +6,15 @@ public class Sigmoid {
 
   private double[] weights;
   private double total;
-  private double cur_output;
   private double[] inputs;
   private Ran ran = new Ran();
-  private Random rand = new Random();
 
   public Sigmoid (int amount) {
     total = 0;
     inputs = new double[amount];
     weights = new double[inputs.length];
     for (int s = 0; s < inputs.length; s++) {
-      weights[s] = ran.d_ran(5, -5);
+      weights[s] = ran.d_ran(7, -7);
     }
   }
 
@@ -33,7 +31,6 @@ public class Sigmoid {
       total += inputs[s] * weights[s];
     }
     total = sig(total);
-    cur_output = total;
     return total;
   }
 

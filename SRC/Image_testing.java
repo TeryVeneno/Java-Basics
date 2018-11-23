@@ -65,15 +65,16 @@ public class Image_testing extends JLabel {
       for (int r = 0; r < (w*h)/100; r++) {
         average += inputs[s * ((w*h)/100) + r];
       }
-      desire[s] = average / ((w*h)/100);
+      desire[s] = (average / ((w*h)/100))/1000000;
+      System.out.println("1");
     }
-    Brain brain = new Brain(6, 120, 100, 1, 0.03, inputs, desire);
-    brain.think(30000);
+    Brain brain = new Brain(3, 120, 100, 1, 0.03, inputs, desire);
+    brain.think(3000);
     res = brain.respond().clone();
     System.out.println(Arrays.toString(res));
     for (int x = 0; x < 10; x++) {
       for (int y = 0; y < 10; y++) {
-        image.setRGB(x,y, (int)res[x * 10 + y]*-10000000);
+        image.setRGB(x,y, (int)res[x * 10 + y]*1000000);
       }
     }
   }
