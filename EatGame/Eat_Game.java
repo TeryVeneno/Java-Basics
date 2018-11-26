@@ -28,7 +28,9 @@ public class Eat_Game {
           fps_delay += 1;
        }
        if (e.getKeyCode() == e.VK_DOWN) {
-          fps_delay -= 1;
+         if (fps_delay != 1) {
+           fps_delay -= 1;
+         }
        }
     }
 
