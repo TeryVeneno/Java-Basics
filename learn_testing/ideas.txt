@@ -39,3 +39,112 @@ public int[] pos_actions (int length, int width) {
   }
   return poses;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+Reinforcement agent;
+int choice = 0;
+int fps_delay = 17;
+int limit = 0;
+
+agent = new Reinforcement(1000, 4, 0.08, 0.8, 0, 100000, Sensor.SINGLE_SENSOR, 10000, this);
+
+public int[] pos_actions (int length, int width) {
+  int[] poses = new int[4];
+  for (int s  = 0; s < 4; s++) {
+    poses[s] = 1;
+  }
+  return poses;
+}
+
+public double transpose (double input) {
+  return (1.0/(0.5*input))*(1.0/(0.5*input));
+}
+
+public double[] next_state(int action) {
+  Rectangle copy_hit = new Rectangle(agent_hit);
+  Rectangle food_copy = new Rectangle(food);
+  if (action == 0) {
+    copy_hit.translate(0, -10);
+  } else if (action == 1) {
+    copy_hit.translate(-10, 0);
+  } else if (action == 2) {
+    copy_hit.translate(0, 10);
+  } else if (action == 3) {
+    copy_hit.translate(10, 0);
+  }
+  double[] inputs = new double[10];
+  inputs[0] = copy_hit.getX();
+  inputs[1] = copy_hit.getY();
+  inputs[2] = food_copy.getX();
+  inputs[3] = food_copy.getY();
+  inputs[4] = copy_hit.getX() - food.getX()*0.2;
+  inputs[5] = copy_hit.getY() - food.getY()*0.2;
+  inputs[6] = copy_hit.getX() - getWidth()-25;
+  inputs[7] = copy_hit.getX() - 0;
+  inputs[8] = copy_hit.getY() - getHeight()-25;
+  inputs[9] = copy_hit.getY() - 0;
+  return inputs;
+}
+
+if (agent_hit.intersects(food)) {
+      food.setLocation(ran.i_ran(25, getWidth()-25), ran.i_ran(25, getHeight())-25);
+      agent.train(50, choice);
+    }
+    if (agent_hit.getX() <= 0) {
+      agent.train(-1, choice);
+      do {
+        agent_hit.setLocation(ran.i_ran(0, getWidth()-25), ran.i_ran(0, getHeight()-25));
+      } while (agent_hit.intersects(food));
+    } else if (agent_hit.getX()+50 >= getWidth()) {
+      agent.train(-1, choice);
+      do {
+        agent_hit.setLocation(ran.i_ran(0, getWidth()-25), ran.i_ran(0, getHeight()-25));
+      } while (agent_hit.intersects(food));
+    } else if (agent_hit.getY() <= 0) {
+      agent.train(-1, choice);
+      do {
+        agent_hit.setLocation(ran.i_ran(0, getWidth()-25), ran.i_ran(0, getHeight()-25));
+      } while (agent_hit.intersects(food));
+    } else if (agent_hit.getY()+50 >= getHeight()) {
+      agent.train(-1, choice);
+      do {
+        agent_hit.setLocation(ran.i_ran(0, getWidth()-25), ran.i_ran(0, getHeight()-25));
+      } while (agent_hit.intersects(food));
+    } else {
+      //agent.train(0, choice);
+    }
+    double[] inputs = new double[10];
+    inputs[0] = agent_hit.getX();
+    inputs[1] = agent_hit.getY();
+    inputs[2] = food.getX();
+    inputs[3] = food.getY();
+    inputs[4] = agent_hit.getX() - food.getX()*0.2;
+    inputs[5] = agent_hit.getY() - food.getY()*0.2;
+    inputs[6] = agent_hit.getX() - getWidth()-25;
+    inputs[7] = agent_hit.getX() - 0;
+    inputs[8] = agent_hit.getY() - getHeight()-25;
+    inputs[9] = agent_hit.getY() - 0;
+    agent.receive(inputs);
+    agent.set_c();
+    choice = agent.choose();
+    //System.out.println(choice);
+    //System.out.println("State: " + agent.ret_c());
+    if (choice == 0) {
+      agent_hit.translate(0, -10);
+    } else if (choice == 1) {
+      agent_hit.translate(-10, 0);
+    } else if (choice == 2) {
+      agent_hit.translate(0, 10);
+    } else if (choice == 3) {
+      agent_hit.translate(10, 0);
+    }

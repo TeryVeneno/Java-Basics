@@ -14,42 +14,6 @@ public class Brain {
   private int o_ns;
   private double desire[];
 
-  public Brain (int layers, int neurons, int choice, double learn_r, double inp[], double[] desired) {
-    feed = new double[layers][neurons+1];
-    inputs = new double[inp.length+1];
-    for (int s = 0; s < inp.length; s++) {
-      inputs[s] = inp[s];
-    }
-    inputs[inputs.length-1] = 1;
-    desire = desired.clone();
-    learn_rate = learn_r;
-    ch = choice;
-    lays = layers;
-    ns = neurons;
-    o_ns = neurons;
-    if (choice == 0) {
-      p_array = new Perceptron[layers][neurons];
-      for (int s = 0; s < ns; s++) {
-        p_array[0][s] = new Perceptron(inputs.length);
-      }
-      for (int l = 1; l < layers; l++) {
-        for (int n = 0; n < ns; n++) {
-          p_array[l][n] = new Perceptron(neurons+1);
-        }
-      }
-    } else if (choice == 1) {
-      s_array = new Sigmoid[layers][neurons];
-      for (int s = 0; s < ns; s++) {
-        s_array[0][s] = new Sigmoid(inputs.length);
-      }
-      for (int l = 1; l < layers; l++) {
-        for (int n = 0; n < ns; n++) {
-          s_array[l][n] = new Sigmoid(neurons+1);
-        }
-      }
-    }
-  }
-
   public Brain (int layers, int neurons, int o_neurons, int choice, double learn_r, double inp[], double[] desired) {
     feed = new double[layers][neurons+1];
     inputs = new double[inp.length+1];
