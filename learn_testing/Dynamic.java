@@ -1,6 +1,8 @@
 package machine_learning;
 
 import utilities.*;
+import machine_learning.networks.*;
+import machine_learning.neurons.*;
 import java.util.*;
 import java.io.IOException;
 
@@ -29,24 +31,41 @@ public class Dynamic {
     maz[6] = ' ';
     maz[7] = ' ';
     maz[8] = 'X';
-    ma[0][0] = 2;
-    ma[0][1] = 0;
-    ma[0][2] = 0;
-    ma[1][0] = 0;
-    ma[1][1] = 0;
-    ma[1][2] = 0;
-    ma[2][0] = 0;
-    ma[2][1] = 0;
-    ma[2][2] = -2;
-    m[0] = 2;
-    m[1] = 0;
-    m[2] = 0;
-    m[3] = 0;
-    m[4] = 0;
-    m[5] = 0;
-    m[6] = 0;
-    m[7] = 0;
-    m[8] = -2;
+  }
+
+  public static int[] pos_actions (int length, int width) {
+    int[] poses = new int[4];
+    poses[0] = 0;
+    poses[1] = 0;
+    poses[2] = 0;
+    poses[3] = 0;
+    int l1 = take[0]-1;
+    int l2 = take[0]+1;
+    int w1 = take[1]-1;
+    int w2 = take[1]+1;
+    for (int s = 0; s < poses.length; s++) {
+      if (s == 0) {
+        if (l1 >= 0) {
+          poses[s] = 1;
+        }
+      }
+      if (s == 1) {
+        if (w1 >= 0) {
+          poses[s] = 1;
+        }
+      }
+      if (s == 2) {
+        if (l2 <= 2) {
+          poses[s] = 1;
+        }
+      }
+      if (s == 3) {
+        if (w2 <= 2) {
+          poses[s] = 1;
+        }
+      }
+    }
+    return poses;
   }
 
   public static int con (int length, int width) {
@@ -92,42 +111,52 @@ public class Dynamic {
 
   public static void main(String[] args) throws InterruptedException, IOException {
     set();
-    Choices choices = new Choices();
     int choice = 0;
     int next = 0;
+    int[] pose = new int [4];
+    double[] desire = new double[4];
+    double max_val = 0;
+    ArrayList<Double> input = new ArrayList<Double>(4);
+    ArrayList<Double> responses = new ArrayList<Double>(4);
     Board board = new Board(maze.clone());
     Random rand = new Random(System.currentTimeMillis());
     int ran = rand.nextInt(9);
-    double[] desire = new double[6];
+    Network ai = new Network(5, 10, 4, 4, 0.11, 0.8, Neuron.MEMORY_LENGTH_2, 0);
     take = conv(ran);
     board.update_board(take[0], take[1], 'A');
-    ma[take[0]][take[1]] = 100;
-    Reinforcement r = new Reinforcement(9, 4, 0.03, 0.7, ran, 500, Sensor.ARRAY_SENSOR, 10, choices);
-    r.receive(ma);
     new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-    for (int s = 0; s < 500; s++) {
+    for (int s = 0; s < 3000; s++) {
       board.update_board(take[0], take[1], maze[take[0]][take[1]]);
-      ma[take[0]][take[1]] = m[con(take[0], take[1])];
-      if (s == 249) {
+      if (s >= 999) {
         maze[0][0] = 'X';
         maze[2][2] = 'F';
         maz[0] = 'X';
         maz[8] = 'F';
-        ma[0][0] = -2;
-        ma[2][2] = 2;
-        m[0] = -2;
-        m[8] = 2;
         board.update_board(0, 0, maze[0][0]);
         board.update_board(2, 2, maze[2][2]);
-        board.update_board(take[0], take[1], maze[take[0]][take[1]]);
-        ma[take[0]][take[1]] = m[con(take[0], take[1])];
+        /*board.update_board(take[0], take[1], maze[take[0]][take[1]]);
         ran = rand.nextInt(9);
-        take = conv(ran);
-        ma[take[0]][take[1]] = 1;
-        r.receive(ma);
-        r.set_c();
+        take = conv(ran);*/
+        input.clear();
+        input.add((double)con(take[0], take[1]));
+        input.add(8.0);
+        input.add(0.0);
+      } else {
+        input.clear();
+        input.add((double)con(take[0], take[1]));
+        input.add(0.0);
+        input.add(8.0);
       }
-      choice = r.choose();
+      responses.clear();
+      responses.addAll(ai.respond(input));
+      pose = pos_actions(take[0], take[1]);
+      max_val = -1;
+      for (int t = 0; t < 4; t++) {
+        if (responses.get(t) > max_val && pose[t] == 1) {
+          max_val = responses.get(t);
+          choice = t;
+        }
+      }
       if (choice == 0) {
         next = con(take[0], take[1]);
         next -= 3;
@@ -146,22 +175,24 @@ public class Dynamic {
         take = conv(next);
       }
       if (maze[take[0]][take[1]] == 'X') {
-        r.train(-1, choice);
-        ma[take[0]][take[1]] = 1;
-        r.receive(ma);
-        r.set_c();
+        for (int t = 0; t < 4; t++) {
+          desire[t] = 1;
+        }
+        desire[choice] = -1;
+        ai.think(10, desire, -10);
       } else if (maze[take[0]][take[1]] == 'F') {
-        r.train(1, choice);
+        for (int t = 0; t < 4; t++) {
+          desire[t] = -1;
+        }
+        desire[choice] = 1;
+        ai.think(10, desire, 10);
         ran = rand.nextInt(9);
         take = conv(ran);
-        ma[take[0]][take[1]] = 1;
-        r.receive(ma);
-        r.set_c();
       } else {
-        r.train(0, choice);
-        ma[take[0]][take[1]] = 1;
-        r.receive(ma);
-        r.set_c();
+        for (int t = 0; t < 4; t++) {
+          desire[t] = 0.5;
+        }
+        ai.think(1, desire, 0);
       }
       board.update_board(take[0], take[1], 'A');
     }
@@ -174,41 +205,41 @@ public class Dynamic {
     maze[2][2] = 'X';
     maz[0] = 'F';
     maz[8] = 'X';
-    ma[0][0] = 2;
-    ma[2][2] = -2;
-    m[0] = 2;
-    m[8] = -2;
+    max_val = 0;
     board.update_board(0, 0, maze[0][0]);
     board.update_board(2, 2, maze[2][2]);
     board.update_board(take[0], take[1], maze[take[0]][take[1]]);
-    ma[take[0]][take[1]] = m[con(take[0], take[1])];
     ran = rand.nextInt(9);
     take = conv(ran);
     board.update_board(take[0], take[1], 'A');
-    ma[take[0]][take[1]] = 1;
-    r.receive(ma);
-    r.set_c();
     for (int s = 0; s < 20; s++) {
+      input.clear();
+      input.add((double)con(take[0], take[1]));
+      input.add(0.0);
+      input.add(8.0);
       new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
       if (maze[take[0]][take[1]] == 'F') {
         board.show_board();
         Thread.sleep(150);
         board.update_board(take[0], take[1], maze[take[0]][take[1]]);
-        ma[take[0]][take[1]] = m[con(take[0], take[1])];
         ran = rand.nextInt(9);
         take = conv(ran);
-        ma[take[0]][take[1]] = 1;
-        r.receive(ma);
-        r.set_c();
-        System.out.println(r.ret_c());
         new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
         board.update_board(take[0], take[1], 'A');
       }
       board.show_board();
       board.update_board(take[0], take[1], maze[take[0]][take[1]]);
-      ma[take[0]][take[1]] = m[con(take[0], take[1])];
-      System.out.println(r.ret_c());
-      choice = r.choose();
+      responses.clear();
+      responses.addAll(ai.respond(input));
+      pose = pos_actions(take[0], take[1]);
+      max_val = -1;
+      for (int t = 0; t < 4; t++) {
+        if (responses.get(t) > max_val && pose[t] == 1) {
+          max_val = responses.get(t);
+          choice = t;
+        }
+      }
+      System.out.println(responses.toString());
       if (choice == 0) {
         next = con(take[0], take[1]);
         next -= 3;
@@ -227,24 +258,29 @@ public class Dynamic {
         take = conv(next);
       }
       if (maze[take[0]][take[1]] == 'X') {
-        r.train(-1, choice);
+        for (int t = 0; t < 4; t++) {
+          desire[t] = 1;
+        }
+        desire[choice] = -1;
+        ai.think(1, desire, -1);
         board.update_board(take[0], take[1], 'A');
-        ma[take[0]][take[1]] = 1;
-        r.receive(ma);
-        r.set_c();
       } else if (maze[take[0]][take[1]] == 'F') {
-        r.train(1, choice);
+        for (int t = 0; t < 4; t++) {
+          desire[t] = -1;
+        }
+        desire[choice] = 1;
+        ai.think(1, desire, 1);
+        ran = rand.nextInt(9);
+        take = conv(ran);
         board.update_board(take[0], take[1], 'A');
-        ma[take[0]][take[1]] = 1;
-        r.receive(ma);
-        r.set_c();
       } else {
-        r.train(0, choice);
+        for (int t = 0; t < 4; t++) {
+          desire[t] = 1;
+        }
+        ai.think(1, desire, 0);
         board.update_board(take[0], take[1], 'A');
-        ma[take[0]][take[1]] = 1;
-        r.receive(ma);
-        r.set_c();
       }
+      board.update_board(take[0], take[1], 'A');
       Thread.sleep(300);
     }
     /*
@@ -256,41 +292,40 @@ public class Dynamic {
     maze[2][2] = 'F';
     maz[0] = 'X';
     maz[8] = 'F';
-    ma[0][0] = -2;
-    ma[2][2] = 2;
-    m[0] = -2;
-    m[8] = 2;
     board.update_board(0, 0, maze[0][0]);
     board.update_board(2, 2, maze[2][2]);
     board.update_board(take[0], take[1], maze[take[0]][take[1]]);
-    ma[take[0]][take[1]] = m[con(take[0], take[1])];
     ran = rand.nextInt(9);
     take = conv(ran);
     board.update_board(take[0], take[1], 'A');
-    ma[take[0]][take[1]] = 1;
-    r.receive(ma);
-    r.set_c();
     for (int s = 0; s < 20; s++) {
+      input.clear();
+      input.add((double)con(take[0], take[1]));
+      input.add(8.0);
+      input.add(0.0);
       new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
       if (maze[take[0]][take[1]] == 'F') {
         board.show_board();
         Thread.sleep(150);
         board.update_board(take[0], take[1], maze[take[0]][take[1]]);
-        ma[take[0]][take[1]] = m[con(take[0], take[1])];
         ran = rand.nextInt(9);
         take = conv(ran);
-        ma[take[0]][take[1]] = 1;
-        r.receive(ma);
-        r.set_c();
-        System.out.println(r.ret_c());
         new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
         board.update_board(take[0], take[1], 'A');
       }
       board.show_board();
       board.update_board(take[0], take[1], maze[take[0]][take[1]]);
-      ma[take[0]][take[1]] = m[con(take[0], take[1])];
-      System.out.println(r.ret_c());
-      choice = r.choose();
+      responses.clear();
+      responses.addAll(ai.respond(input));
+      pose = pos_actions(take[0], take[1]);
+      max_val = -1;
+      for (int t = 0; t < 4; t++) {
+        if (responses.get(t) > max_val && pose[t] == 1) {
+          max_val = responses.get(t);
+          choice = t;
+        }
+      }
+      System.out.println(responses.toString());
       if (choice == 0) {
         next = con(take[0], take[1]);
         next -= 3;
@@ -309,33 +344,35 @@ public class Dynamic {
         take = conv(next);
       }
       if (maze[take[0]][take[1]] == 'X') {
-        r.train(-1, choice);
+        for (int t = 0; t < 4; t++) {
+          desire[t] = 1;
+        }
+        desire[choice] = -1;
+        ai.think(1, desire, -1);
         board.update_board(take[0], take[1], 'A');
-        ma[take[0]][take[1]] = 1;
-        r.receive(ma);
-        r.set_c();
       } else if (maze[take[0]][take[1]] == 'F') {
-        r.train(1, choice);
+        for (int t = 0; t < 4; t++) {
+          desire[t] = -1;
+        }
+        desire[choice] = 1;
+        ai.think(1, desire, 1);
+        ran = rand.nextInt(9);
+        take = conv(ran);
         board.update_board(take[0], take[1], 'A');
-        ma[take[0]][take[1]] = 1;
-        r.receive(ma);
-        r.set_c();
       } else {
-        r.train(0, choice);
+        for (int t = 0; t < 4; t++) {
+          desire[t] = 1;
+        }
+        ai.think(1, desire, 0);
         board.update_board(take[0], take[1], 'A');
-        ma[take[0]][take[1]] = 1;
-        r.receive(ma);
-        r.set_c();
       }
+      board.update_board(take[0], take[1], 'A');
       Thread.sleep(300);
     }
-    double[][] q = r.ret_q().clone();
-    for (int s = 0; s < q.length; s++) {
-      System.out.println(s + "" + Arrays.toString(q[s]));
-    }
+    ai.print_all_mem();
   }
 
-  private static class Choices implements Action_Definer {
+  /*private static class Choices implements Action_Definer {
     public int[] pos_actions (int length, int width) {
       int[] poses = new int[4];
       poses[0] = 0;
@@ -374,7 +411,7 @@ public class Dynamic {
     public double transpose (double val) {
       return 1.0 / (1.0 + Math.exp((-1 * val)));
     }
-  }
+  }*/
 }
 
 /*if ((int)((sensor.respond()[0]*10 + sensor2.respond()[0]*10 + sensor3.respond()[0]*10)/32.8) >= 9) {

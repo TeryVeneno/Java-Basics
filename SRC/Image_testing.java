@@ -49,11 +49,13 @@ public class Image_testing extends JLabel {
   }
 
   public void print_ai () {
+    int temp = 0;
+    int red, green, blue = 0;
     int w = img.getWidth();
     int h = img.getHeight();
     double[] inputs = new double[w*h];
-    double[] desire = new double[100];
-    double[] res = new double[100];
+    double[] desire = new double[300];
+    double[] res = new double[300];
     int average = 0;
     for (int s = 0; s < w; s++) {
       for (int r = 0; r < h; r++) {
@@ -62,19 +64,50 @@ public class Image_testing extends JLabel {
       }
     }
     for (int s = 0; s < 100; s++) {
+      average = 0;
       for (int r = 0; r < (w*h)/100; r++) {
         average += inputs[s * ((w*h)/100) + r];
       }
-      desire[s] = (average / ((w*h)/100))/1000000;
-      System.out.println("1");
+      average /= ((w*h)/100);
+      double holder1 = ((average >> 16) & 0xff);
+      double holder2 = ((average >> 8) & 0xff);
+      double holder3 = ((average) & 0xff);
+      desire[s*3] = holder1/1000;
+      desire[s*3+1] = holder2/1000;
+      desire[s*3+2] = holder3/1000;
+      System.out.println(holder1);
+      System.out.println(holder2);
+      System.out.println(holder3);
+      System.out.println(holder1/1000);
+      System.out.println(holder2/1000);
+      System.out.println(holder3/1000);
+      System.out.println(desire[s*3]);
+      System.out.println(desire[s*3+1]);
+      System.out.println(desire[s*3+2]);
     }
-    Brain brain = new Brain(3, 120, 100, 1, 0.03, inputs, desire);
-    brain.think(3000);
+    Brain brain = new Brain(3, 30, 300, 1, 0.03, inputs, desire);
+    brain.think(10000);
     res = brain.respond().clone();
     System.out.println(Arrays.toString(res));
     for (int x = 0; x < 10; x++) {
       for (int y = 0; y < 10; y++) {
-        image.setRGB(x,y, (int)res[x * 10 + y]*1000000);
+        red = (int)(res[(x*10+y)*3]*1000);
+        green = (int)(res[(x*10+y)*3+1]*1000);
+        blue = (int)(res[(x*10+y)*3+2]*1000);
+        if (red > 255) {
+          red = 255;
+        }
+        if (green > 255) {
+          green = 255;
+        }
+        if (blue > 255) {
+          blue = 255;
+        }
+        temp = new Color(red, green, blue).getRGB();
+        image.setRGB(x,y, temp);
+        System.out.println((temp >> 16) & 0xff);
+        System.out.println(((temp >> 8) & 0xff));
+        System.out.println(((temp) & 0xff));
       }
     }
   }

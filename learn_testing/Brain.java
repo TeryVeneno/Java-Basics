@@ -15,7 +15,11 @@ public class Brain {
   private double desire[];
 
   public Brain (int layers, int neurons, int o_neurons, int choice, double learn_r, double inp[], double[] desired) {
-    feed = new double[layers][neurons+1];
+    if (o_neurons < neurons) {
+      feed = new double[layers][neurons+1];;
+    } else {
+      feed = new double[layers][o_neurons+1];;
+    }
     inputs = new double[inp.length+1];
     for (int s = 0; s < inp.length; s++) {
       inputs[s] = inp[s];
@@ -40,17 +44,29 @@ public class Brain {
         p_array[lays-1][n] = new Perceptron(neurons+1);
       }
     } else if (choice == 1) {
-      s_array = new Sigmoid[layers][neurons];
+      if (o_neurons < neurons) {
+        s_array = new Sigmoid[layers][neurons];
+      } else {
+        s_array = new Sigmoid[layers][o_neurons];
+      }
       for (int s = 0; s < ns; s++) {
         s_array[0][s] = new Sigmoid(inputs.length);
       }
       for (int l = 1; l < layers-1; l++) {
         for (int n = 0; n < ns; n++) {
-          s_array[l][n] = new Sigmoid(neurons+1);
+          if (o_neurons < neurons) {
+            s_array[l][n] = new Sigmoid(neurons+1);
+          } else {
+            s_array[l][n] = new Sigmoid(o_neurons+1);
+          }
         }
       }
       for (int n = 0; n < o_ns; n++) {
-        s_array[lays-1][n] = new Sigmoid(neurons+1);
+        if (o_neurons < neurons) {
+          s_array[lays-1][n] = new Sigmoid(neurons+1);
+        } else {
+          s_array[lays-1][n] = new Sigmoid(o_neurons+1);
+        }
       }
     }
   }
@@ -104,7 +120,8 @@ public class Brain {
     double total_error = 0;
     train_val = 0;
     for (int n = o_ns-1; n > -1; n--) {
-      total_error += desire[n] - feed[lays-1][n];
+      double temp_error = desire[n] - feed[lays-1][n];
+      total_error += Math.pow(temp_error, 2);
     }
     for (int l = lays -2; l > -1; l--) {
       for (int n = ns -2; n > -1; n--) {
