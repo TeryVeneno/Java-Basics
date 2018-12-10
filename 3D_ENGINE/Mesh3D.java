@@ -31,9 +31,12 @@ public class Mesh3D {
   public BufferedImage render (Vertex3D camera, Vertex3D light, BufferedImage environment, Matrix3D camera_rotation) {
     Matrix3D transform = calc_transform();
     for (Triangle3D t : mesh) {
-      Vertex3D p1 = transform.transform(t.p1);
-      Vertex3D p2 = transform.transform(t.p2);
-      Vertex3D p3 = transform.transform(t.p3);
+      Vertex3D p1 = camera_rotation.transform(t.p1);
+      Vertex3D p2 = camera_rotation.transform(t.p2);
+      Vertex3D p3 = camera_rotation.transform(t.p3);
+      p1 = transform.transform(p1);
+      p2 = transform.transform(p2);
+      p3 = transform.transform(p3);
       p1.subtract(camera);
       p2.subtract(camera);
       p3.subtract(camera);
@@ -43,9 +46,6 @@ public class Mesh3D {
       p2.y = environment.getHeight()/2 - (DOF * p2.y / -p2.z);
       p3.x = (DOF * p3.x / -p3.z) + environment.getWidth()/2;
       p3.y = environment.getHeight()/2 - (DOF * p3.y / -p3.z);
-      p1 = camera_rotation.transform(p1);
-      p2 = camera_rotation.transform(p2);
-      p3 = camera_rotation.transform(p3);
 
       Vertex3D ab = new Vertex3D(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z);
       Vertex3D ac = new Vertex3D(p3.x - p1.x, p3.y - p1.y, p3.z - p1.z);
