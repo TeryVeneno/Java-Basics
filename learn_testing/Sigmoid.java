@@ -68,9 +68,9 @@ public class Sigmoid {
 
   public void randomize_w () {
     for (int w = 0; w < weights.length; w++) {
-      if (ran.percent_chance(0.25,0.5)) {
-        if (ran.percent_chance(0.10,0.5)) {
-          weights[w] = ran.d_ran(5,-5);
+      if (ran.percent_chance(0.15,0.5)) {
+        if (ran.percent_chance(0.05,0.5)) {
+          weights[w] = ran.d_ran(7,-7);
         } else {
           weights[w] = weights[w] + ran.d_ran(1,-1);
         }

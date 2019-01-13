@@ -11,32 +11,40 @@ public class Mesh3D {
   private static final long serialVersionUID = 1l;
 
   ArrayList<Triangle3D> mesh;
+  ArrayList<Triangle3D> original;
   double[] z_buffer;
   double pitch_val = 0;
   double heading_val = 0;
   int DOF;
-  public Mesh3D (ArrayList<Triangle3D> mesh_data, int size_buffer, int dof) {
-    mesh = new ArrayList<Triangle3D>(mesh_data);
+  Vertex3D scale;
+  double z_post;
+
+  public Mesh3D (ArrayList<Triangle3D> mesh_data, int size_buffer, int dof, Vertex3D scale) {
+    mesh = new ArrayList<Triangle3D>(mesh_data.size());
+    original = new ArrayList<Triangle3D>(mesh_data.size());
+    for (Triangle3D t : mesh_data) {
+      mesh.add(t.clone());
+      original.add(t.clone());
+    }
     z_buffer = new double[size_buffer];
     for (int z = 0; z < size_buffer; z++) {
       z_buffer[z] = Double.NEGATIVE_INFINITY;
     }
     DOF = dof;
-  }
+    this.scale = new Vertex3D(scale);
 
-  public Matrix3D calc_transform () {
-    return Matrix3D.multiply(Matrix3D.y_rotate(heading_val), Matrix3D.x_rotate(pitch_val));
+    for (Triangle3D t : mesh) {
+      t.p1.multiply(scale);
+      t.p2.multiply(scale);
+      t.p3.multiply(scale);
+    }
   }
 
   public BufferedImage render (Vertex3D camera, Vertex3D light, BufferedImage environment, Matrix3D camera_rotation) {
-    Matrix3D transform = calc_transform();
     for (Triangle3D t : mesh) {
       Vertex3D p1 = camera_rotation.transform(t.p1);
       Vertex3D p2 = camera_rotation.transform(t.p2);
       Vertex3D p3 = camera_rotation.transform(t.p3);
-      p1 = transform.transform(p1);
-      p2 = transform.transform(p2);
-      p3 = transform.transform(p3);
       p1.subtract(camera);
       p2.subtract(camera);
       p3.subtract(camera);
@@ -97,12 +105,11 @@ public class Mesh3D {
     return environment;
   }
 
-  public BufferedImage wire_frame_render (Vertex3D camera, BufferedImage environment) {
-    Matrix3D transform = calc_transform();
+  public BufferedImage wire_frame_render (Vertex3D camera, BufferedImage environment, Matrix3D camera_rotation) {
     for (Triangle3D t : mesh) {
-      Vertex3D p1 = transform.transform(t.p1);
-      Vertex3D p2 = transform.transform(t.p2);
-      Vertex3D p3 = transform.transform(t.p3);
+      Vertex3D p1 = camera_rotation.transform(t.p1);
+      Vertex3D p2 = camera_rotation.transform(t.p2);
+      Vertex3D p3 = camera_rotation.transform(t.p3);
       p1.subtract(camera);
       p2.subtract(camera);
       p3.subtract(camera);
@@ -159,33 +166,48 @@ public class Mesh3D {
     return result;
   }
 
-  public void change_pitch (double pitch_val) {
-    this.pitch_val = pitch_val;
-  }
-
-  public void change_heading (double heading_val) {
-    this.heading_val = heading_val;
-  }
-
-  public void change_both (double pitch_val, double heading_val) {
-    this.pitch_val = pitch_val;
-    this.heading_val = heading_val;
-  }
-
   public void change_dof (int dof) {
     DOF = dof;
   }
 
   public void translate (Vertex3D xyz) {
-    for (Triangle3D t : mesh) {
-      t.p1.add(xyz);
-      t.p2.add(xyz);
-      t.p3.add(xyz);
+    for (int s = 0; s < mesh.size(); s++) {
+      mesh.get(s).p1.add(xyz);
+      mesh.get(s).p2.add(xyz);
+      mesh.get(s).p3.add(xyz);
+      original.get(s).p1.add(xyz);
+      original.get(s).p2.add(xyz);
+      original.get(s).p3.add(xyz);
     }
   }
 
-  public Matrix3D ret_matrix () {
-    return calc_transform();
+  public void change_size (Vertex3D scale) {
+    mesh = new ArrayList<Triangle3D>(original);
+    for (Triangle3D t : mesh) {
+      t.p1.multiply(scale);
+      t.p2.multiply(scale);
+      t.p3.multiply(scale);
+    }
+  }
+
+  public Vertex3D ret_scale () {
+    return scale;
+  }
+
+  public double ret_post_z (Vertex3D camera, Matrix3D camera_rotation) {
+    for (Triangle3D t : mesh) {
+      Vertex3D p1 = camera_rotation.transform(t.p1);
+      Vertex3D p2 = camera_rotation.transform(t.p2);
+      Vertex3D p3 = camera_rotation.transform(t.p3);
+      p1.subtract(camera);
+      p2.subtract(camera);
+      p3.subtract(camera);
+      z_post += p1.z;
+      z_post += p2.z;
+      z_post += p3.z;
+    }
+    z_post /= mesh.size()*3;
+    return z_post;
   }
 }
 //dof = DEPTH OF FIELD

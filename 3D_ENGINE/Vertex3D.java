@@ -94,4 +94,20 @@ public class Vertex3D {
   public Vertex3D division (int val) {
     return new Vertex3D(this.x / val, this.y / val, this.z / val);
   }
+
+  public void positize () {
+    x = Math.sqrt(Math.pow(x,2));
+    y = Math.sqrt(Math.pow(y,2));
+    z = Math.sqrt(Math.pow(z,2));
+  }
+
+  public void negatize () {
+    x = -Math.sqrt(Math.pow(x,2));
+    y = -Math.sqrt(Math.pow(y,2));
+    z = -Math.sqrt(Math.pow(z,2));
+  }
+
+  public String toString () {
+    return x + ", " + y + ", " + z;
+  }
 }

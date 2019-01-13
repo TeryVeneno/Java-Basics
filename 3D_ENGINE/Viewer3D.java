@@ -1,5 +1,6 @@
 package render_engine;
 import render_engine.polygons.*;
+import utilities.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -8,27 +9,13 @@ import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 
 public class Viewer3D extends KeyAdapter {
-  static double heading_val = 180;
-  static double pitch_val = 0;
-  static Vertex3D camera_rotation = new Vertex3D(1, 1, 1);
-  static Vertex3D camera = new Vertex3D(0, 0, 100);
+  static Vertex3D camera_rotation = new Vertex3D(0, 0, 0);
+  static Vertex3D camera = new Vertex3D(0, 0, 1000);
   static final int DEPTH_OF_FIELD = 800;
   static Vertex3D xyz = new Vertex3D(0, 0, 0);
   static int already_drawn = 0;
 
   public void keyPressed (KeyEvent e) {
-    if (e.getKeyCode() == e.VK_UP) {
-      pitch_val -= 2;
-    }
-    if (e.getKeyCode() == e.VK_DOWN) {
-      pitch_val += 2;
-    }
-    if (e.getKeyCode() == e.VK_RIGHT) {
-      heading_val -= 2;
-    }
-    if (e.getKeyCode() == e.VK_LEFT) {
-      heading_val += 2;
-    }
     if (e.getKeyCode() == e.VK_W) {
       camera.z -= 10;
     }
@@ -65,23 +52,37 @@ public class Viewer3D extends KeyAdapter {
     if (e.getKeyCode() == e.VK_6) {
       xyz.z = 5;
     }
-    if (e.getKeyCode() == e.VK_7) {
+    if (e.getKeyCode() == e.VK_UP) {
+      if (camera_rotation.x >= 360) {
+        camera_rotation.x = 0;
+      } else if (camera_rotation.x <= -360) {
+        camera_rotation.x = 0;
+      }
       camera_rotation.x += 1;
     }
-    if (e.getKeyCode() == e.VK_8) {
+    if (e.getKeyCode() == e.VK_DOWN) {
+      if (camera_rotation.x >= 360) {
+        camera_rotation.x = 0;
+      } else if (camera_rotation.x <= -360) {
+        camera_rotation.x = 0;
+      }
       camera_rotation.x -= 1;
     }
-    if (e.getKeyCode() == e.VK_9) {
+    if (e.getKeyCode() == e.VK_RIGHT) {
+      if (camera_rotation.y >= 360) {
+        camera_rotation.y = 0;
+      } else if (camera_rotation.y <= -360) {
+        camera_rotation.y = 0;
+      }
       camera_rotation.y += 1;
     }
-    if (e.getKeyCode() == e.VK_0) {
+    if (e.getKeyCode() == e.VK_LEFT) {
+      if (camera_rotation.y >= 360) {
+        camera_rotation.y = 0;
+      } else if (camera_rotation.y <= -360) {
+        camera_rotation.y = 0;
+      }
       camera_rotation.y -= 1;
-    }
-    if (e.getKeyCode() == e.VK_MINUS) {
-      camera_rotation.z += 1;
-    }
-    if (e.getKeyCode() == e.VK_EQUALS) {
-      camera_rotation.z -= 1;
     }
   }
 
@@ -108,6 +109,7 @@ public class Viewer3D extends KeyAdapter {
 
   public static void main(String[] args) throws InterruptedException {
     JFrame frame = new JFrame("3D");
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     Container pane = frame.getContentPane();
     pane.setLayout(new BorderLayout());
     ArrayList<Triangle3D> triangle = new ArrayList<Triangle3D>(4);
@@ -137,13 +139,15 @@ public class Viewer3D extends KeyAdapter {
 
     ArrayList<Triangle3D> triangles = triangle;
     ArrayList<Triangle3D> tringles = tringle;
+    Doubles post_zts = new Doubles(0);
+    Doubles post_zcs = new Doubles(0);;
 
     JPanel render_panel = new JPanel() {
       private static final long serialVersionUID = 1l;
       Vertex3D light = new Vertex3D(0, 0, 1);
       public void paintComponent (Graphics g) {
-        Mesh3D tetrahedron = new Mesh3D(triangles, getWidth()*getHeight(), 800);
-        Mesh3D cube = new Mesh3D(tringles, getWidth()*getHeight(), 800);
+        Mesh3D tetrahedron = new Mesh3D(triangles, getWidth()*getHeight(), 800, new Vertex3D(2, 2, 2));
+        Mesh3D cube = new Mesh3D(tringles, getWidth()*getHeight(), 800, new Vertex3D(0.5,0.5,0.5));
         cube.translate(xyz);
         Vertex3D cube_pos = new Vertex3D(0, 0, 0);
         Vertex3D triangle_pos = new Vertex3D(0, 0, 0);
@@ -167,10 +171,12 @@ public class Viewer3D extends KeyAdapter {
         g2d.drawString("Position of Cube: "+" X: "+Double.toString(cube_pos.x)+", Y: "+Double.toString(cube_pos.y)+", Z: "+Double.toString(cube_pos.z), 0, 10);
         g2d.drawString("Position of Tetrahedron: "+" X: "+Double.toString(triangle_pos.x)+", Y: "+Double.toString(triangle_pos.y)+", Z: "+Double.toString(triangle_pos.z), 0, 30);
         BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-        tetrahedron.change_both(pitch_val, heading_val);
-        cube.change_both(pitch_val, heading_val);
         Matrix3D camera_angle = Matrix3D.multiply(Matrix3D.x_rotate(camera_rotation.x), Matrix3D.multiply(Matrix3D.y_rotate(camera_rotation.y), Matrix3D.z_rotate(camera_rotation.z)));
-        if (triangle_pos.z - camera.z > cube_pos.z - camera.z) {
+        Doubles post_zt = post_zts;
+        Doubles post_zc = post_zcs;
+        post_zt.value = tetrahedron.ret_post_z(use_cam, camera_angle);
+        post_zc.value = cube.ret_post_z(use_cam, camera_angle);
+        if (post_zt.value >= post_zc.value) {
           image = cube.render(use_cam, light, image, camera_angle);
           image = tetrahedron.render(use_cam, light, image, camera_angle);
         } else {
@@ -183,10 +189,13 @@ public class Viewer3D extends KeyAdapter {
     frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
     Viewer3D control = new Viewer3D();
     frame.addKeyListener(control);
+    frame.pack();
     frame.setVisible(true);
     pane.add(render_panel, BorderLayout.CENTER);
     while (true) {
       frame.repaint();
+      System.out.println(post_zts.value);
+      System.out.println(post_zcs.value);
       Thread.sleep(17);
     }
   }
