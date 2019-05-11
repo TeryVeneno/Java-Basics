@@ -166,7 +166,7 @@ public class GN extends KeyAdapter {
         death[c] = 0;
       }
       for (int f = 0; f < pop; f++) {
-        fitness[f] = food_count[f]*100 + o_start[f]*2;
+        fitness[f] = food_count[f]*500 + o_start[f]*2;
         food_count[f] = 0;
       }
       for (int l = 0; l < pop/4; l++) {
