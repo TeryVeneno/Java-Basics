@@ -85,12 +85,14 @@ public class Pong_Board extends Canvas {
     ball.update();
     player.translate(p1m);
     player2.translate(p2m);
-    if (player.get_y() < -7 || player.get_y() + 100 > getHeight()-12) {
-      player.translate(-p1m);
-    }
-    if (player2.get_y() < -7 || player2.get_y() + 100 > getHeight()-12) {
-      player2.translate(-p2m);
-    }
+    if (player.get_y() < -7)
+      player.set_y(0);
+    else if (player.get_y() + 100 > getHeight())
+      player.set_y(getHeight()-100);
+    if (player2.get_y() < -7)
+      player2.set_y(0);
+    else if (player2.get_y() + 100 > getHeight())
+      player2.set_y(getHeight()-100);
     if (player.colliding(ball)) {
       ball.accelerate(ball.ret_mag(), player.calc_angle(ball));
       ball.set_x(player.get_x()+36);
@@ -137,7 +139,7 @@ public class Pong_Board extends Canvas {
     ball = new Ball(getWidth()/2, getHeight()/2, 10, Color.WHITE);
     score1 = 0;
     score2 = 0;
-    ball.accelerate(12, 0);
+    ball.accelerate(17, 0);
     long old = System.currentTimeMillis();
     long elapsed = 0;
     long current = old;
@@ -203,16 +205,16 @@ public class Pong_Board extends Canvas {
   private class Paddle_Handler extends KeyAdapter {
     public void keyPressed (KeyEvent e) {
       if (e.getKeyCode() == e.VK_W) {
-        p1m = -10;
+        p1m = -15;
       }
       if (e.getKeyCode() == e.VK_S) {
-        p1m = 10;
+        p1m = 15;
       }
       if (e.getKeyCode() == e.VK_UP) {
-        p2m = -10;
+        p2m = -15;
       }
       if (e.getKeyCode() == e.VK_DOWN) {
-        p2m = 10;
+        p2m = 15;
       }
       if (e.getKeyCode() == e.VK_Q) {
         stopped = true;
